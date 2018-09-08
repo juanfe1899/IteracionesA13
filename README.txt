@@ -1,7 +1,7 @@
 Iteracion #1
 
-Geovanny AndrÈs Gonz·lez - 201719528
-Juan Felipe Sanchez Guerrero
+Geovanny Andr√©s Gonz√°lez - 201719528
+Juan Felipe Sanchez Guerrero - 201618582
 Grupo A-13
 
 
