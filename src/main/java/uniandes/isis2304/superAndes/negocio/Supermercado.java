@@ -27,6 +27,11 @@ public class Supermercado implements VOSupermercado{
 	
 	private List<Object []> productos;
 	
+	/** Lista de todos los proveedores que posee el supermercado  
+	 */
+	
+	private List<Proveedor> proveedores;
+	
 	/* ****************************************************************
 	 * 			Métodos
 	 *****************************************************************/
@@ -39,6 +44,7 @@ public class Supermercado implements VOSupermercado{
 		NIT = 0;
 		nombre = "";
 		productos = new LinkedList<Object []>();
+		proveedores = new LinkedList<>();
 	}
 	
 	/**
@@ -52,6 +58,7 @@ public class Supermercado implements VOSupermercado{
 		NIT = pNIT;
 		nombre = pNombre;
 		productos = new LinkedList<Object []>(); //Los productos son desconocidos.
+		proveedores = new LinkedList<>();
 	}
 
 	/**
@@ -114,6 +121,14 @@ public class Supermercado implements VOSupermercado{
 		this.productos = productos;
 	}
 	
+	public List<Proveedor> getProveedores() {
+		return proveedores;
+	}
+
+	public void setProveedores(List<Proveedor> proveedores) {
+		this.proveedores = proveedores;
+	}
+
 	@Override
 	public String toString() {
 		return "Supermercado [NIT =" + NIT + ", nombre =" + nombre + "]";
@@ -135,6 +150,12 @@ public class Supermercado implements VOSupermercado{
 			String infoPrecioUnidad = "" +((Ofrecen) elemento[1]).getPrecioUnidadMedida();
 			infoSuper += conteo++ + "." + infoProducto + "precioUnitario = " + infoPrecioCU
 					+ "precioUnidadMedida =" + infoPrecioUnidad +"\n";
+		}
+		
+		infoSuper += "\n\n -- Proveedores de productos \n";
+		conteo = 1; //Contar ahora los proveedores
+		for (Proveedor elemento : proveedores) {
+			infoSuper += conteo++ + "." + elemento.toString() +"\n";
 		}
 		
 		return infoSuper;

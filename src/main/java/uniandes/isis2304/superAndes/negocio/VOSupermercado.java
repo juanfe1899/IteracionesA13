@@ -46,6 +46,10 @@ public interface VOSupermercado {
 	
 	public void setProductos(List<Object[]> productos);
 	
+	public List<Proveedor> getProveedores();
+
+	public void setProveedores(List<Proveedor> proveedores);
+	
 	@Override
 	public String toString();
 	
