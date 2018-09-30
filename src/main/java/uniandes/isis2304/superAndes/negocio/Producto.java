@@ -6,7 +6,7 @@ package uniandes.isis2304.superAndes.negocio;
  * @author Geovanny Andres Gonzalez
  */
 
-public class Producto {
+public class Producto implements VOProducto{
 
 	/* ****************************************************************
 	 * 			Atributos

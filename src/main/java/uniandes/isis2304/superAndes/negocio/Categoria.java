@@ -1,6 +1,6 @@
 package uniandes.isis2304.superAndes.negocio;
 
-public class Categoria {
+public class Categoria implements VOCategoria{
 
 	/**
 	 * Identificador de la categoria

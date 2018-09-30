@@ -11,18 +11,18 @@ package uniandes.isis2304.superAndes.negocio;
 public interface VOProducto {
 	
 	/**
-	 * Gets the id.
-	 * @return the id
+	 * Gets the codigo.
+	 * @return the codigo
 	 */
-	public long getId();
+	public String getCodigo();
 
 		
 	/**
-	 * Sets the id.
-	 * @param id the new id
+	 * Sets the codigo.
+	 * @param id the new codigo
 	 */
 	
-	public void setId(long id);
+	public void setCodigo(String id);
 
 	/**
 	 * Gets the cantidad en presentacion.
@@ -30,7 +30,7 @@ public interface VOProducto {
 	 * @return the cantidad en presentacion
 	 */
 	
-	public int getCantidadEnPresentacion();
+	public int getCantidadPresentacion();
 	
 
 	/**
@@ -39,7 +39,7 @@ public interface VOProducto {
 	 * @param cantidadEnPresentacion the new cantidad en presentacion
 	 */
 	
-	public void setCantidadEnPresentacion(int cantidadEnPresentacion);
+	public void setCantidadPresentacion(int cantidadEnPresentacion);
 
 	/**
 	 * Gets the marca.
@@ -104,4 +104,9 @@ public interface VOProducto {
 	 */
 	
 	public void setUnidadMedida(String unidadMedida);
+	
+	@Override
+	public String toString();
+	
+	
 }
