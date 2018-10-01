@@ -10,13 +10,23 @@ public class OrdenProducto {
 	 * 			Atributos
 	 *****************************************************************/
 	
+	/** Calificacion del pedido */
+	
 	private int calificacionOrden;
+	
+	/** Estado de la orden, puede ser EN_ESPERA o ENTREGADO. */
 	
 	private String estado;
 	
+	/** Fecha esperada de entrega del producto. */
+	
 	private Timestamp fechaEsperada;
 	
+	/** Fecha de entrega del producto */
+	
 	private Timestamp fechaEntrega;
+	
+	/** Identificador unico de la orden. */
 	
 	private int idOrden;
 	
@@ -30,7 +40,7 @@ public class OrdenProducto {
 	
 	/** Lista de todos los productos ofrecidos por el proveedor 
 	 *  Cada espacio de Object es una dupla de: [Producto, ProductosOrden] que representa el producto,
-	 *  la cantidad y el costo a que lo vende el proveedor.
+	 *  la cantidad y el costo acordado de compra con el que lo vende el proveedor.
 	 */
 	
 	private List<Object[]> listaProductos;
