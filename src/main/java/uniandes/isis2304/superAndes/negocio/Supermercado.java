@@ -158,6 +158,7 @@ public class Supermercado implements VOSupermercado{
 			infoSuper += conteo++ + "." + elemento.toString() +"\n";
 		}
 		
+		infoSuper += "]";
 		return infoSuper;
 	}	
 }

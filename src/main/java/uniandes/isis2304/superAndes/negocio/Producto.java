@@ -58,7 +58,7 @@ public class Producto implements VOProducto{
 	 * Categoria del producto
 	 */
 	
-	private Categoria categoria;
+	private Categoria categoria;	 
 
 	/* ****************************************************************
 	 * 			Métodos 

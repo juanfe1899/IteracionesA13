@@ -171,6 +171,7 @@ public class Proveedor implements VOProveedor{
 					+ "precioUnidadMedida =" + infoPrecioUnidad +"\n";
 		}
 		
+		infoSuper += "]";
 		return infoSuper;
 	}	
 }
