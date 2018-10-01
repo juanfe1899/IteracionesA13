@@ -1,5 +1,10 @@
 package uniandes.isis2304.superAndes.negocio;
 
+/**
+ * Clase para modelar el concepto CATEGORIA del negocio de los Parranderos
+ * @author Geovanny Andres Gonzalez
+ */
+
 public class Categoria implements VOCategoria{
 
 	/**

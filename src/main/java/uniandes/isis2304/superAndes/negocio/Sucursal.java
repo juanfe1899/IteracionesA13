@@ -1,40 +1,70 @@
 package uniandes.isis2304.superAndes.negocio;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Clase para modelar la relación SUCURSAL del negocio SuperAndes
  * @author Geovanny Andres Gonzalez
  */
 
-public class Sucursal {
+public class Sucursal implements VOSucursal{
 	
 	/* ****************************************************************
 	 * 			Atributos
 	 *****************************************************************/
 	
+	/** Ciudad de la sucursal */
+	
 	private String ciudad;
+	
+	/** Direccion de la sucursal */
 	
 	private String direccion;
 	
+	/** Identificacion de la sucursal */
+	
 	private long idSucursal;
 	
+	/** Nombre de la sucursal. */
+	
 	private String nombre;
+	
+	/** Son todo el registro historico de las ordenes de pedido hechas por una sucursal. */
+	
+	private List<OrdenProducto> ordenesSucursal;
 	
 	/* ****************************************************************
 	 * 			Metodos
 	 *****************************************************************/
 	
+	/**
+	 * Instantiates a new sucursal.
+	 */
+	
 	public Sucursal () {
 		ciudad = "";
 		direccion = "";
 		idSucursal = 0;
-		nombre = "";
+		nombre = null; //Según las reglas de negocio el nombre puede ser nulo.
+		ordenesSucursal = new LinkedList<>();
 	}
+	
+	/**
+	 * Instantiates a new sucursal.
+	 *
+	 * @param pCiudad the ciudad
+	 * @param pDireccion the direccion
+	 * @param pIdSucursal the id sucursal
+	 * @param pNombre the nombre
+	 */
 	
 	public Sucursal (String pCiudad, String pDireccion, long pIdSucursal, String pNombre) {
 		ciudad = pCiudad;
 		direccion = pDireccion;
 		idSucursal = pIdSucursal;
 		nombre = pNombre;
+		ordenesSucursal = new LinkedList<>();
 	}
 
 	/**
@@ -117,8 +147,33 @@ public class Sucursal {
 		this.nombre = nombre;
 	}
 	
+	public List<OrdenProducto> getOrdenesSucursal() {
+		return ordenesSucursal;
+	}
+
+	public void setOrdenesSucursal(List<OrdenProducto> ordenesSucursal) {
+		this.ordenesSucursal = ordenesSucursal;
+	}
+
 	@Override
 	public String toString() {
 		return "Sucursal [idSucursal =" + idSucursal + ", nombre ="+ nombre +", ciudad =" + ciudad + ", direccion =" + direccion + "]";				
+	}
+	
+	/**
+	 * Devuelve la informacion de la sucursal y de las ordenes de pedido realizadas.
+	 * @return Informacion completa de las compras realizadas por una sucursal.
+	 */	
+	
+	public String toStringCompleto() {
+		String info = "Sucursal [idSucursal =" + idSucursal + ", nombre ="+ nombre +", ciudad =" + ciudad + ", direccion =" + direccion;
+		info += "\n\n Ordenes solicitadas \n";
+		int conteo = 1;
+		
+		for (OrdenProducto orden : ordenesSucursal) {
+			info += conteo++ + "." + orden.toStringCompleto() + "\n";
+		}
+		info += "]";
+		return info;
 	}
 }
