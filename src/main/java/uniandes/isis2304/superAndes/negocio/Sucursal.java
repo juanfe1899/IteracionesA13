@@ -34,6 +34,10 @@ public class Sucursal implements VOSucursal{
 	
 	private List<OrdenProducto> ordenesSucursal;
 	
+	/** Ventas realizadas */
+	
+	private List<Factura> ventas;
+	
 	/* ****************************************************************
 	 * 			Metodos
 	 *****************************************************************/
@@ -48,6 +52,7 @@ public class Sucursal implements VOSucursal{
 		idSucursal = 0;
 		nombre = null; //Según las reglas de negocio el nombre puede ser nulo.
 		ordenesSucursal = new LinkedList<>();
+		ventas = new LinkedList<>();
 	}
 	
 	/**
@@ -65,6 +70,7 @@ public class Sucursal implements VOSucursal{
 		idSucursal = pIdSucursal;
 		nombre = pNombre;
 		ordenesSucursal = new LinkedList<>();
+		ventas = new LinkedList<>();
 	}
 
 	/**
@@ -153,6 +159,20 @@ public class Sucursal implements VOSucursal{
 
 	public void setOrdenesSucursal(List<OrdenProducto> ordenesSucursal) {
 		this.ordenesSucursal = ordenesSucursal;
+	}
+
+	/**
+	 * @return the ventas
+	 */
+	public List<Factura> getVentas() {
+		return ventas;
+	}
+
+	/**
+	 * @param ventas the ventas to set
+	 */
+	public void setVentas(List<Factura> ventas) {
+		this.ventas = ventas;
 	}
 
 	@Override

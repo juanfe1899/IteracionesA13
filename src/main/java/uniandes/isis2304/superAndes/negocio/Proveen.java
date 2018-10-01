@@ -11,7 +11,7 @@ package uniandes.isis2304.superAndes.negocio;
  * @author Geovanny Andres Gonzalez
  */
 
-public class Proveen implements VOOfrecen{
+public class Proveen implements VOProveen{
 	
 	/* ****************************************************************
 	 * 			Atributos

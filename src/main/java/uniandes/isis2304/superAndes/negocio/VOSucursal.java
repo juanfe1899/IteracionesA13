@@ -1,5 +1,7 @@
 package uniandes.isis2304.superAndes.negocio;
 
+import java.util.List;
+
 public interface VOSucursal {
 
 	/**
@@ -65,6 +67,19 @@ public interface VOSucursal {
 	 */
 	
 	public void setNombre(String nombre);
+	
+	/**
+	 * @return the ventas
+	 */
+	
+	public List<Factura> getVentas();
+
+	/**
+	 * @param ventas the ventas to set
+	 */
+	
+	public void setVentas(List<Factura> ventas);
+
 	
 	@Override
 	public String toString();	
