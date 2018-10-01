@@ -20,7 +20,7 @@ public class Proveedor implements VOProveedor{
 	
 	/** Identificacion del proveedor */
 	
-	private int NIT;
+	private int nit;
 	
 	/** Nombre del proveedor */
 	
@@ -43,7 +43,7 @@ public class Proveedor implements VOProveedor{
 	
 	public Proveedor() {
 		calificacion = 0;
-		NIT = 0;
+		nit = 0;
 		nombre = "";
 		productos = new LinkedList<Object[]>();
 	}
@@ -58,7 +58,7 @@ public class Proveedor implements VOProveedor{
 	
 	public Proveedor(int pCalificacion, int pNIT, String pNombre) {
 		calificacion = pCalificacion;
-		NIT = pNIT;
+		nit = pNIT;
 		nombre = pNombre;
 		productos = new LinkedList<Object[]>();
 	}
@@ -90,7 +90,7 @@ public class Proveedor implements VOProveedor{
 	 */
 	
 	public int getNIT() {
-		return NIT;
+		return nit;
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class Proveedor implements VOProveedor{
 	 */
 	
 	public void setNIT(int nIT) {
-		NIT = nIT;
+		nit = nIT;
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class Proveedor implements VOProveedor{
 	
 	@Override
 	public String toString() {
-		return "Proveedor [NIT =" + NIT + ", calificacion =" + calificacion + ", nombre =" +
+		return "Proveedor [NIT =" + nit + ", calificacion =" + calificacion + ", nombre =" +
 				nombre + "]";
 	}
 	
@@ -159,7 +159,7 @@ public class Proveedor implements VOProveedor{
 	 */
 	
 	public String toStringCompleto() {
-		String infoSuper = "Proveedor [NIT =" + NIT + ", nombre =" + nombre + ", calificacion =" + calificacion;
+		String infoSuper = "Proveedor [NIT =" + nit + ", nombre =" + nombre + ", calificacion =" + calificacion;
 		infoSuper += "\n\n -- Productos que provee \n";
 		int conteo = 1;
 		

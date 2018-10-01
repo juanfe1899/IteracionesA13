@@ -54,8 +54,13 @@ public class PersistenciaSuperandes {
 	
 	private PersistenceManagerFactory pmf;
 	
+	/** Clase con las consultas para las operaciones generales en la base de datos. */
 	
 	private SQLUtil sqlUtil;
+	
+	/** Clase con las consultas para las operaciones de la clase Proveedores. */
+	
+	private SQLProveedores sqlProveedores;
 	
 	/**
 	 * Arreglo de cadenas con los nombres de las tablas de la base de datos.
