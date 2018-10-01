@@ -2,8 +2,17 @@ package uniandes.isis2304.superAndes.negocio;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-public class Promocion {
+/**
+ * Clase para manejar la informacion y datos de una promocion
+ * @author Geovanny Andres Gonzalez
+ */
 
+public class Promocion implements VOPromocion{
+
+	/* ****************************************************************
+	 * 			Atributos
+	 *****************************************************************/
+	
 	/**
 	 * Fecha de inicio de una promocion
 	 */
@@ -42,9 +51,15 @@ public class Promocion {
 	
 	private static SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy/MM/dd '-' HH:mm");
 	
-	
+	/**
+	 * Producto al cual se le va a aplicar la promocion
+	 */
 	
 	private ProductoSucursal productoPromocion;
+	
+	/* ****************************************************************
+	 * 			Metodos
+	 *****************************************************************/
 	
 	/**
 	 * Instantiates a new promociones.

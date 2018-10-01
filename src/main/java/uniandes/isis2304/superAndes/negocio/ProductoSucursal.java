@@ -8,7 +8,7 @@ import java.util.List;
  * @author Geovanny Andres Gonzalez
  */
 
-public class ProductoSucursal {
+public class ProductoSucursal implements VOProductosSucursal{
 		
 	/* ****************************************************************
 	 * 			Atributos
