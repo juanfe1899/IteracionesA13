@@ -117,7 +117,8 @@ class SQLProveedores {
 	{
 		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaProveedores ());
 		q.setResultClass(Proveedor.class);
-		return (List<Proveedor>) q.executeList();
+		List<Proveedor> executeList = (List<Proveedor>) q.executeList();
+		return executeList;
 	}
 	
 	/**
