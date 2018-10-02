@@ -66,6 +66,7 @@ public class ProveedoresTest
 			log.info ("Probando la restricción de UNICIDAD del nombre del tipo de bebida");
 			superAndes = new SuperAndes (openConfig (CONFIG_TABLAS_A));
 		}
+		
 		catch (Exception e)
 		{
 //			e.printStackTrace();

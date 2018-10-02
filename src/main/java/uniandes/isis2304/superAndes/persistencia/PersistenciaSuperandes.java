@@ -128,6 +128,7 @@ public class PersistenciaSuperandes {
 		
 		String unidadPersistencia = tableConfig.get ("unidadPersistencia").getAsString ();
 		log.trace ("Accediendo unidad de persistencia: " + unidadPersistencia);
+		System.out.println("Nombre de la unidad persistencia: " + unidadPersistencia);
 		pmf = JDOHelper.getPersistenceManagerFactory (unidadPersistencia);
 	}
 

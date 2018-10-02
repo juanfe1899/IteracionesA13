@@ -185,7 +185,7 @@ public class ConexionTest
 		
 		catch (Exception e)
 		{
-			//e.printStackTrace();
+			e.printStackTrace();
 			log.info ("Prueba de tabla inexistente correcta. La excepción generada es: " + e.getClass ().getName ());
 			log.info ("La causa es: " + e.getCause ().toString ());
 
