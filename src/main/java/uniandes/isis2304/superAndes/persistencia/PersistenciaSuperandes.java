@@ -369,6 +369,46 @@ public class PersistenciaSuperandes {
 		return resp;
 	}
 	
+	/**
+	 * Elimina todas las tuplas de todas las tablas de la base de datos de SuperAndes
+	 * Crea y ejecuta las sentencias SQL para cada tabla de la base de datos en el orden:
+	 * CATEGORIAS, PRODUCTOS,
+	 * PROVEEDORES, PROVEEN, PRODUCTOS_SUCURSAL, PROMOCIONES, SUPERMERCADOS, SUCURSALES, OFRECEN, SUPERMERCADO_PROVEEDORES,
+	 * PEDIDOS_SUCURSAL, ORDEN_PRODUCTOS, CLIENTES, FACTURAS, VENTAS_PRODUCTO, ESPACIO_ACOMODACION, EXISTENCIAS
+	 * 	 
+	 * @return Numero de lineas eliminadas por cada tabla	 
+	 */
+	
+	public long [] limpiarSuperAndes ()
+	{
+		PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx=pm.currentTransaction();
+        try
+        {
+            tx.begin();
+            long [] resp = sqlUtil.limpiarParranderos (pm);
+            tx.commit ();
+            log.info ("Borrada la base de datos");
+            return resp;
+        }
+        catch (Exception e)
+        {
+//        	e.printStackTrace();
+        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+        	return new long[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,};
+        }
+        
+        finally
+        {
+            if (tx.isActive())
+            {
+                tx.rollback();
+            }
+            pm.close();
+        }
+		
+	}
+	
 	/* ****************************************************************
 	 * 			Métodos para manejar los PROVEEDORES
 	 *****************************************************************/
