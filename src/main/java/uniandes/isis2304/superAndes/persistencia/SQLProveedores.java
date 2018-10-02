@@ -57,9 +57,13 @@ class SQLProveedores {
 	 */
 	
 	public long agregarProveedor(PersistenceManager pm, String nombre, int calificacion, int nit) {
+		System.out.println("Crear Query de insercion");
 		Query qProveedor = pm.newQuery(SQL, "INSERT INTO " + pp.darTablaProveedores() + "(nit, nombre, calificacion) values (?,?,?)");
 		qProveedor.setParameters(nit, nombre, calificacion);
-		return (long) qProveedor.executeUnique();
+		System.out.println("Inicio de ejecucion de Query" + "Consulta: " + "INSERT INTO " + pp.darTablaProveedores() + "(nit, nombre, calificacion) values (?,?,?)");
+		long tuplas = (long) qProveedor.executeUnique();
+		System.out.println("[SQLProveedores] Tuplas modificadas: " + tuplas);
+		return tuplas;
 	}
 	
 	/**
@@ -117,7 +121,7 @@ class SQLProveedores {
 	{
 		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaProveedores ());
 		q.setResultClass(Proveedor.class);
-		List<Proveedor> executeList = (List<Proveedor>) q.executeList();
+		List<Proveedor> executeList = (List<Proveedor>) q.executeList();		
 		return executeList;
 	}
 	
