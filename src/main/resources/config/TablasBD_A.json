@@ -1,5 +1,5 @@
 {
-    "title": "Nombre de las tablas de superAndes para la aplicacion A",
+    "title": "Nombre de las tablas de superAndes para la aplicacion principal",
 	"unidadPersistencia": "SuperAndes",
 	"tablas":
 	[
@@ -21,4 +21,5 @@
         "SUPERMERCADOS",
         "SUPERMERCADO_PROVEEDORES",
         "VENTAS_PRODUCTO"
+    ]
 }

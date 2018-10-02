@@ -174,6 +174,7 @@ public class PersistenciaSuperandes {
 	 * @param tableConfig - El objeto Json con los nombres de las tablas
 	 * @return La lista con los nombres del secuenciador y de las tablas
 	 */
+	
 	private List <String> leerNombresTablas (JsonObject tableConfig)
 	{
 		JsonArray nombres = tableConfig.getAsJsonArray("tablas") ;
@@ -194,6 +195,7 @@ public class PersistenciaSuperandes {
 	{
 		//TODO Hacer clases SQL
 		sqlUtil = new SQLUtil(this);
+		sqlProveedores = new SQLProveedores(this);		
 	}
 
 	/**

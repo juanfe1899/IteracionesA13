@@ -135,7 +135,7 @@ public class SuperAndes
 	 * @return Una lista de objetos Proveedor con todos las proveedores que conoce la aplicacion, llenos con su informacion basica
 	 */
 	
-	public List<Proveedor> darBebedores ()
+	public List<Proveedor> darProveedores ()
 	{
         log.info ("Listando proveedores");
         List<Proveedor> bebedores = pp.darProveedores();	
