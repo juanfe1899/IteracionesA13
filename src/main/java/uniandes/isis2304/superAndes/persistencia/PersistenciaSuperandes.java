@@ -431,9 +431,11 @@ public class PersistenciaSuperandes {
         
         try
         {
+        	System.out.println("Iniciando transaccion");
         	tx.begin();
         	long tuplasInsertadas = sqlProveedores.agregarProveedor(pm, nombre, calificacion, nit);
         	tx.commit(); //Guarda el proceso de la transaccion en la base de datos.
+        	System.out.println("Guardando transaccion");
         	log.trace("Insercion del Proveedor con NIT: " + nit + ": " + tuplasInsertadas + " tuplas insertadas ");
         	
         	return new Proveedor(calificacion, nit, nombre);
@@ -441,6 +443,7 @@ public class PersistenciaSuperandes {
         
         //Deja registro de los posibles errores que se presenten.
         catch(Exception e) {
+        	e.printStackTrace();
         	log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
         	return null;
         }

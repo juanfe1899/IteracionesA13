@@ -149,7 +149,7 @@ public class SuperAndes
 	 * @return Una lista de objetos VOProveedor con todos los proveedores que conoce la aplicacion, llenos con su informacion basica
 	 */
 	
-	public List<VOProveedor> darVOBebedores ()
+	public List<VOProveedor> darVOProveedores ()
 	{
         log.info ("Generando los VO de Proveedor");
         List<VOProveedor> voProveedores = new LinkedList<> ();
