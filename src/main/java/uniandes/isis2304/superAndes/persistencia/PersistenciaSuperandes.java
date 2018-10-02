@@ -5,12 +5,19 @@ import java.util.List;
 
 import javax.jdo.JDODataStoreException;
 import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Transaction;
+
 import org.apache.log4j.Logger;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import uniandes.isis2304.superAndes.negocio.Producto;
+import uniandes.isis2304.superAndes.negocio.Proveedor;
+import uniandes.isis2304.superAndes.negocio.Proveen;
 
 
 public class PersistenciaSuperandes {
@@ -362,9 +369,257 @@ public class PersistenciaSuperandes {
 		return resp;
 	}
 	
+	/* ****************************************************************
+	 * 			Métodos para manejar los PROVEEDORES
+	 *****************************************************************/
 	
+	/**
+	 * Agrega un nuevo proveedor en la base de datos
+	 * @param nit Numero de identificacion tributaria del proveedor
+	 * @param nombre Nombre del proveedor
+	 * @param calificacion Calificacion asignada al proveedor
+	 * @return El nuevo proveedor agregado a la base de datos.
+	 */
 	
+	public Proveedor agregarProveedor(int nit, String nombre, int calificacion) {
+		
+		//Inicio de la transaccion.
+		PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+        
+        try
+        {
+        	tx.begin();
+        	long tuplasInsertadas = sqlProveedores.agregarProveedor(pm, nombre, calificacion, nit);
+        	tx.commit(); //Guarda el proceso de la transaccion en la base de datos.
+        	log.trace("Insercion del Proveedor con NIT: " + nit + ": " + tuplasInsertadas + " tuplas insertadas ");
+        	
+        	return new Proveedor(calificacion, nit, nombre);
+        }
+        
+        //Deja registro de los posibles errores que se presenten.
+        catch(Exception e) {
+        	log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
+        	return null;
+        }
+        
+        //Hace Rollback de la transaccion y cierra la peticion.
+        finally
+        {
+            if (tx.isActive())
+            {
+                tx.rollback();
+            }
+            
+            pm.close();
+        }       
+	}
 	
+	/**
+	 * Elimina un proveedor en la base de datos.
+	 * @param nit Numero de identificacion tributaria del proveedor
+	 * @return El numero de tuplas eliminadas de la base de datos. -1 si hay errores.
+	 */
 	
+	public long eliminarProveedor(int nit) {
+		
+		//Inicio de la transaccion.
+		PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+        
+        try
+        {
+        	tx.begin();
+        	long tuplas = sqlProveedores.eliminarProveedor(pm, nit);
+        	tx.commit(); //Guarda el proceso de la transaccion en la base de datos.
+        	log.trace("Eliminacion del Proveedor con NIT: " + nit + ": " + tuplas + " tuplas eliminadas ");
+        	
+        	return tuplas;
+        }
+        
+        //Deja registro de los posibles errores que se presenten.
+        catch(Exception e) {
+        	log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
+        	return -1;
+        }
+        
+        //Hace Rollback de la transaccion y cierra la peticion.
+        finally
+        {
+            if (tx.isActive())
+            {
+                tx.rollback();
+            }
+            
+            pm.close();
+        }       
+	}
 	
+	/**
+	 * Retorna el proveedor que posee el nit dado por parametro
+	 * @param nit Nit del proveedor
+	 * @return El proveedor existente en la base de datos con el nit dado por parametro
+	 */
+	
+	public Proveedor darProveedor (int nit) {
+		return (Proveedor) sqlProveedores.darProveedor(pmf.getPersistenceManager(), nit);
+	}
+	
+	/**
+	 * Método que consulta TODA LA INFORMACIÓN DE UN PROVEEDOR con el identificador dado. Incluye la información básica del bebedor,
+	 * y los productos que este suministra
+	 * @param nit - El identificador del bebedor
+	 * @return El objeto PROVEEDOR, construido con base en las tuplas de la tablas PROVEEDORES, PROVEEN, PRODUCTOS
+	 * relacionadas con el identificador de bebedor dado
+	 */
+	public Proveedor darProveedorCompleto (int nit) 
+	{
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Proveedor proveedor = (Proveedor)sqlProveedores.darProveedor(pm, nit);
+		proveedor.setProductos(armarProductosSuministrados(sqlProveedores.darProductosOfrecidos(pm, nit)));
+		return proveedor;
+	}
+	
+	/**
+	 * Método privado para generar las información completa de loss productos suministrados por un proveedor: 
+	 * La información básica del producto suministrado, y la fecha y hora provistos en el formato esperado por los objetos BEBEDOR
+	 * @param tuplas - Una lista de arreglos de 12 objetos, con la información del producto y de proveen, en el siguiente orden:
+	 * productos.codigo, productos.nombre, productos.marca, productos.presentacion, productos.unidad_medida, productos.cantidad_en_presentacion, productos.especificacion_empacado, 
+	   productos.categoria, proveen.id_proveedor, proveen.id_producto, proveen.precio_cu, proveen.precio_unidad_medida
+	   
+	 * @return Una lista de arreglos de 2 objetos. El primero es un objeto PRODUCTO, el segundo corresponde a un objeto PROVEEN
+	 * 
+	 * Los valores de las columnas respuesta de la consulta siendo:
+	 * productos.codigo, productos.nombre, productos.marca, productos.presentacion, productos.unidad_medida, productos.cantidad_en_presentacion, productos.especificacion_empacado, 
+	   productos.categoria, proveen.id_proveedor, proveen.id_producto, proveen.precio_cu, proveen.precio_unidad_medida
+	 */
+	private List<Object []> armarProductosSuministrados (List<Object []> tuplas)
+	{
+		List<Object []> productosSuministrados = new LinkedList <Object []> ();
+		for (Object [] tupla : tuplas)
+		{
+			Object [] productosSuministro = new Object [2];
+			
+			//Obtencion del objeto PRODUCTO
+			String codigo = ((String) tupla [0]);
+			String nombre = ((String) tupla [1]);
+			String marca = ((String) tupla [2]);
+			String presentacion = ((String) tupla [3]);
+			String unidad_medida = ((String) tupla [4]);
+			int cantidadPresentacion = ((int) tupla[5]);
+			int especificacionEmpacado = ((int) tupla[6]);
+			long categoria = ((long) tupla [7]);
+			
+			//TODO Asignar la categoria a buscar obteniendo la FK categoria (Numero).
+			productosSuministro[0] = new Producto(codigo, cantidadPresentacion, marca, presentacion, especificacionEmpacado, unidad_medida, null);
+			
+			//Obtencion del objeto PROVEEN
+			int id_proveedor = ((int) tupla[8]);
+			String codigo_producto = ((String) tupla[9]);
+			int precio_cu = ((int) tupla[10]);
+			int precio_unidad_medida = ((int) tupla[11]);
+			
+			productosSuministro[1] = new Proveen(precio_cu, precio_unidad_medida, id_proveedor, codigo_producto);
+			
+			productosSuministrados.add (productosSuministro);
+		}
+		
+		return productosSuministrados;
+	}
+	
+	/**
+	 * Método que consulta todas las tuplas en la tabla PROVEEDORES
+	 * @return La lista de objetos PROVEEDOR, construidos con base en las tuplas de la tabla PROVEEDORES
+	 */
+	
+	public List<Proveedor> darProveedores ()
+	{
+		return sqlProveedores.darProveedores(pmf.getPersistenceManager());
+	}
+	
+	/**
+	 * Método que consulta todas las tuplas en la tabla PROVEEDORES
+	 * @return La lista de objetos PROVEEDOR, construidos con base en las tuplas de la tabla PROVEEDORES
+	 */
+	
+	public List<Proveedor> darProveedoresCalificacion(int calificacion)
+	{
+		return sqlProveedores.darProveedoresPorCalificacion(pmf.getPersistenceManager(), calificacion);
+	}
+	
+	/**
+	 * Cambia la calificacion de un proveedor en la base de datos
+	 * @param nit Numero de identificacion tributaria del proveedor
+	 * @param calificacion Nueva calificacion asignada al proveedor
+	 * @return El numero de tuplas modificadas en la base de datos.
+	 */
+	
+	public long cambiarCalificacionProveedor(int nit, int calificacion) {
+		
+		//Inicio de la transaccion.
+		PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+        
+        try
+        {
+        	tx.begin();
+        	long tuplas = sqlProveedores.cambiarCalificacionProveedor(pm, nit, calificacion);
+        	tx.commit(); //Guarda el proceso de la transaccion en la base de datos.
+        	log.trace("Actualizacion de la calificacion del Proveedor con NIT: " + nit + ": " +  ": nueva calificacion: " + calificacion + " "+ tuplas + " tuplas modificadas ");
+        	
+        	return tuplas;        	
+        }
+        
+        //Deja registro de los posibles errores que se presenten.
+        catch(Exception e) {
+        	log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
+        	return -1;
+        }
+        
+        //Hace Rollback de la transaccion y cierra la peticion.
+        finally
+        {
+            if (tx.isActive())
+            {
+                tx.rollback();
+            }
+            
+            pm.close();
+        }       
+	}
+	
+	/**
+	 * Método que elimima, de manera transaccional, un PROVEEDOR y los PRODUCTOS que suministra.
+	 * Si el proveedor está referenciado en alguna otra relación, no se borra ni el proveedor NI los productos
+	 * @param nit - El identificador del proveedor
+	 * @return Un arreglo de dos números que representan el número de proveedores eliminados y 
+	 * el número de productos eliminadas, respectivamente. [-1, -1] si ocurre alguna Excepción
+	 */
+	
+	public long [] eliminarProveedorYProductos (int nit)
+	{
+		PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx=pm.currentTransaction();
+        try
+        {
+            tx.begin();
+            long [] resp = sqlProveedores.eliminarProveedorYProductos(pm, nit);
+            tx.commit();
+            return resp;
+        }
+        catch (Exception e)
+        {
+//        	e.printStackTrace();
+        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+        	return new long[] {-1, -1};
+        }
+        finally
+        {
+            if (tx.isActive())
+            {
+                tx.rollback();
+            }
+            pm.close();
+        }
+	}	
 }

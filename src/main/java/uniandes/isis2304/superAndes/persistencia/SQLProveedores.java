@@ -155,7 +155,7 @@ class SQLProveedores {
 	 * @param calificacion - La nueva calificacion para el proveedor.
 	 * @return El número de tuplas modificadas
 	 */
-	public long cambiarCiudadBebedor (PersistenceManager pm, long nit, int calificacion) 
+	public long cambiarCalificacionProveedor (PersistenceManager pm, int nit, int calificacion) 
 	{
 		 Query q = pm.newQuery(SQL, "UPDATE " + pp.darTablaProveedores () + " SET calificacion = ? WHERE nit = ?");
 	     q.setParameters(calificacion, nit);
@@ -172,7 +172,7 @@ class SQLProveedores {
 	 * @return Una pareja de números [número de proveedores eliminados, número de productos eliminadas]
 	 */
 	
-	public long [] eliminarProveedorYProductos (PersistenceManager pm, long nit) 
+	public long [] eliminarProveedorYProductos (PersistenceManager pm, int nit) 
 	{
       Query q1 = pm.newQuery(SQL, "DELETE FROM " + pp.darTablaProveedores () + " WHERE nit = ?");
       q1.setParameters(nit);
