@@ -57,7 +57,7 @@ class SQLProveedores {
 	 */
 	
 	public long agregarProveedor(PersistenceManager pm, String nombre, int calificacion, int nit) {
-		System.out.println("Crear Query de insercion");
+		System.out.println("Crear Query de insercion");	
 		Query qProveedor = pm.newQuery(SQL, "INSERT INTO " + pp.darTablaProveedores() + "(nit, nombre, calificacion) values (?,?,?)");
 		qProveedor.setParameters(nit, nombre, calificacion);
 		System.out.println("Inicio de ejecucion de Query" + "Consulta: " + "INSERT INTO " + pp.darTablaProveedores() + "(nit, nombre, calificacion) values (?,?,?)");

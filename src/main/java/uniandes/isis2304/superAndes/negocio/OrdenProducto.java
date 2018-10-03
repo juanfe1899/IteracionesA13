@@ -4,7 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-public class OrdenProducto {
+/**
+ * Clase que representa la relacion PRODUCTOS_SUCURSAL 
+ * @author Geovanny Andres Gonzalez
+ */
+
+public class OrdenProducto implements VOOrdenProducto{
 
 	/* ****************************************************************
 	 * 			Atributos
@@ -28,7 +33,7 @@ public class OrdenProducto {
 	
 	/** Identificador unico de la orden. */
 	
-	private int idOrden;
+	private long idOrden;
 	
 	/**
 	 *  Permite darle el formato a la fecha - ATENCION: Si la fecha presenta formatos para
@@ -72,7 +77,7 @@ public class OrdenProducto {
 	 * @param pIdOrden the id orden
 	 */
 	
-	public OrdenProducto(int pCalificacion, String pEstado, Timestamp pFechaEsperada, Timestamp pFechaEntrega, int pIdOrden) {
+	public OrdenProducto(int pCalificacion, String pEstado, Timestamp pFechaEsperada, Timestamp pFechaEntrega, long pIdOrden) {
 		calificacionOrden = pCalificacion;
 		estado = pEstado;
 		fechaEsperada = pFechaEsperada;
@@ -167,7 +172,7 @@ public class OrdenProducto {
 	 * @return the id orden
 	 */
 	
-	public int getIdOrden() {
+	public long getIdOrden() {
 		return idOrden;
 	}
 
@@ -177,7 +182,7 @@ public class OrdenProducto {
 	 * @param idOrden the new id orden
 	 */
 	
-	public void setIdOrden(int idOrden) {
+	public void setIdOrden(long idOrden) {
 		this.idOrden = idOrden;
 	}
 	

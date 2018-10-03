@@ -195,9 +195,107 @@ public class SuperAndes
 	}
 	
 	/* ****************************************************************
+	 * 			Metodos para la tabla PEDIDOS_SUCURSAL
+	 *****************************************************************/
+	
+	/**
+	 * Elimina un proveedor por su identificador
+	 * Adiciona entradas al log de la aplicacion
+	 * @param nit - El identificador del proveedor a eliminar
+	 * @return El numero de tuplas eliminadas
+	 */
+	
+	public long eliminarOrdenPedido (long idOrden)
+	{
+        log.info ("Eliminando orden de pedido con ID: " + idOrden);
+        long resp = pp.eliminarOrdenSucursal(idOrden);
+        log.info ("Eliminando orden de pedido con ID: " + resp + " tuplas eliminadas");
+        return resp;
+	}
+	
+	/**
+	 * Encuentra un proveedor y su informacion basica, segun su identificador
+	 * @param nit - El identificador del proveedor buscado
+	 * @return Un objeto Proveedor que corresponde con el identificador buscado y lleno con su informacion basica
+	 * 			null, si un bebedor con dicho identificador no existe
+	 */
+	
+	public OrdenProducto darOrdenProducto (long idOrden)
+	{
+        log.info ("Dar orden de pedido con id: " + idOrden);
+        OrdenProducto buscado = pp.darOrdenPorId(idOrden);
+        log.info ("Buscando orden de pedido: " + buscado != null ? buscado : "NO EXISTE");
+        return buscado;
+	}
+	
+	/**
+	 * Encuentra todos los tipos de bebida en Parranderos y los devuelve como una lista de VOTipoBebida
+	 * Adiciona entradas al log de la aplicación
+	 * @return Una lista de objetos VOTipoBebida con todos los tipos de bebida que conoce la aplicación, llenos con su información básica
+	 */
+	public List<VOOrdenProducto> darVOOrdenes ()
+	{
+		log.info ("Generando los VO de Tipos de bebida");        
+        List<VOOrdenProducto> voTipos = new LinkedList<VOOrdenProducto> ();
+        for (VOOrdenProducto tb : pp.darOrdenesSucursal())
+        {
+        	voTipos.add (tb);
+        }
+        log.info ("Generando los VO de Tipos de bebida: " + voTipos.size() + " existentes");
+        return voTipos;
+	}
+	
+	public List<OrdenProducto> darOrdenes ()
+	{
+		return pp.darOrdenesSucursal();
+	}
+	
+	/* ****************************************************************
+	 * 			Metodos para la tabla ORDEN_PRODUCTOS
+	 *****************************************************************/
+	
+	public long eliminarProductosPedido (long idOrden)
+	{
+        log.info ("Eliminando orden de pedido con ID: " + idOrden);
+        long resp = pp.eliminarProductosOrden(idOrden);
+        log.info ("Eliminando orden de pedido con ID: " + resp + " tuplas eliminadas");
+        return resp;
+	}
+	
+	/**
+	 * Encuentra un proveedor y su informacion basica, segun su identificador
+	 * @param nit - El identificador del proveedor buscado
+	 * @return Un objeto Proveedor que corresponde con el identificador buscado y lleno con su informacion basica
+	 * 			null, si un bebedor con dicho identificador no existe
+	 */
+	
+	public ProductosOrden darProductoOrden (long idOrden, String codProducto)
+	{
+        log.info ("Dar orden de pedido con id: " + idOrden);
+        ProductosOrden buscado = pp.darProductosOrdenPorId(idOrden, codProducto);
+        log.info ("Buscando orden de pedido: " + buscado != null ? buscado : "NO EXISTE");
+        return buscado;
+	}
+	
+	public List<ProductosOrden> darProductosOrdenes()
+	{
+		return pp.darProductosOrden();
+	}
+	
+	/* ****************************************************************
 	 * 			MÃ©todos para administraciÃ³n
 	 *****************************************************************/
 
+	public long [] requerimientoFuncional9 (long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
+			String codProducto, int precioUnitario, int cantidad)
+	{
+		log.info ("Agregando una nueva orden de pedido del producto: " + codProducto + " para la sucursal :" + idSucursal + " entregada por el proveedor :" + nitProveedor);
+        long [] resp = pp.requerimientoFuncional9(idSucursal, nitProveedor, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);        		
+        log.info ("Pedido agregado: " + resp [0] + " Productos encargados " + resp [1]);
+        return resp;
+	}
+	
+	
 	/**
 	 * Elimina todas las tuplas de todas las tablas de la base de datos de SuperAndes
 	 * @return Un arreglo con 17 numeros que indican el numero de tuplas borradas en las tablas:

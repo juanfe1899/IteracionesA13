@@ -82,7 +82,7 @@ public interface VOOrdenProducto {
 	 * @return the id orden
 	 */
 	
-	public int getIdOrden();
+	public long getIdOrden();
 
 	/**
 	 * Sets the id orden.
@@ -90,7 +90,7 @@ public interface VOOrdenProducto {
 	 * @param idOrden the new id orden
 	 */
 	
-	public void setIdOrden(int idOrden);
+	public void setIdOrden(long idOrden);
 	
 	/**
 	 * Devuelve la informacion de una orden de un producto
