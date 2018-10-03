@@ -1,0 +1,25 @@
+{
+    "title": "Nombre de las tablas de superAndes para pruebas de la aplicación cuando la base de datos no existe o está caida",
+	"unidadPersistencia": "SuperAndesErrorUser",
+	"tablas":
+	[
+        "X_Superandes_sequence",
+		"X_CATEGORIAS",
+		"X_PRODUCTOS",
+		"X_PROVEEDORES",
+		"X_PROVEEN",
+		"X_PRODUCTOS_SUCURSAL",
+		"X_PROMOCIONES",
+		"X_SUPERMERCADOS",
+		"X_SUCURSALES",
+		"X_OFRECEN",
+		"X_SUPERMERCADO_PROVEEDORES",
+		"X_PEDIDOS_SUCURSAL",
+		"X_ORDEN_PRODUCTOS",
+		"X_CLIENTES",
+		"X_FACTURAS",
+		"X_VENTAS_PRODUCTO",
+		"X_ESPACIO_ACOMODACION",
+		"X_EXISTENCIAS"
+    ]
+}
