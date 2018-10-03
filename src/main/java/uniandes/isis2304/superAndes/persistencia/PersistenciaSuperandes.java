@@ -30,8 +30,8 @@ public class PersistenciaSuperandes {
 
 	/**
 	 * Clase para el manejador de persistencia del proyecto SuperAndes
-	 * Traduce la información entre objetos Java y tuplas de la base de datos, en ambos sentidos
-	 * Sigue un patrón SINGLETON (Sólo puede haber UN objeto de esta clase) para comunicarse de manera correcta
+	 * Traduce la informaciÃ³n entre objetos Java y tuplas de la base de datos, en ambos sentidos
+	 * Sigue un patrÃ³n SINGLETON (SÃ³lo puede haber UN objeto de esta clase) para comunicarse de manera correcta
 	 * con la base de datos 
 	 * @author Geovanny Andres Gonzalez
 	 */
@@ -41,7 +41,7 @@ public class PersistenciaSuperandes {
 	 *****************************************************************/
 
 	/**
-	 * Logger para escribir la traza de la ejecución
+	 * Logger para escribir la traza de la ejecuciÃ³n
 	 */
 
 	private static Logger log = Logger.getLogger(PersistenciaSuperandes.class.getName());
@@ -56,13 +56,13 @@ public class PersistenciaSuperandes {
 	 * 			Atributos
 	 *****************************************************************/
 	/**
-	 * Atributo privado que es el único objeto de la clase - Patrón SINGLETON
+	 * Atributo privado que es el Ãºnico objeto de la clase - PatrÃ³n SINGLETON
 	 */
 
 	private static PersistenciaSuperandes instance;
 
 	/**
-	 * Fábrica de Manejadores de persistencia, para el manejo correcto de las transacciones
+	 * FÃ¡brica de Manejadores de persistencia, para el manejo correcto de las transacciones
 	 */
 
 	private PersistenceManagerFactory pmf;
@@ -77,10 +77,14 @@ public class PersistenciaSuperandes {
 
 	private SQLProductosOrden sqlProductosOrden;
 
-	private SQLOrdenProductos sqlOrdenProductos;
-	
-	private SQLExistencias sqlExistencias;
+	private SQLOrdenProductos sqlOrdenProductos;	
 
+	private SQLFacturas sqlFacturas;
+	
+	private SQLPromocion sqlPromocion;	
+
+	private SQLExistencias sqlExistencias;
+  
 	/**
 	 * Arreglo de cadenas con los nombres de las tablas de la base de datos.
 	 * Comienza con el Sequence seguido de: Categorias, Producto, Proveedores, Proveen,
@@ -96,11 +100,11 @@ public class PersistenciaSuperandes {
 	 */	
 
 	/* ****************************************************************
-	 * 			Métodos del MANEJADOR DE PERSISTENCIA
+	 * 			MÃ©todos del MANEJADOR DE PERSISTENCIA
 	 *****************************************************************/
 
 	/**
-	 * Constructor privado con valores por defecto - Patrón SINGLETON
+	 * Constructor privado con valores por defecto - PatrÃ³n SINGLETON
 	 */
 	private PersistenciaSuperandes ()
 	{
@@ -129,7 +133,7 @@ public class PersistenciaSuperandes {
 		tablas.add("EXISTENCIAS");	
 	}
 	/**
-	 * Constructor privado, que recibe los nombres de las tablas en un objeto Json - Patrón SINGLETON
+	 * Constructor privado, que recibe los nombres de las tablas en un objeto Json - PatrÃ³n SINGLETON
 	 * @param tableConfig - Objeto Json que contiene los nombres de las tablas y de la unidad de persistencia a manejar
 	 */
 
@@ -145,7 +149,7 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
-	 * @return Retorna el único objeto PersistenciaSuperandes existente - Patrón SINGLETON
+	 * @return Retorna el Ãºnico objeto PersistenciaSuperandes existente - PatrÃ³n SINGLETON
 	 */
 	public static PersistenciaSuperandes getInstance ()
 	{
@@ -160,7 +164,7 @@ public class PersistenciaSuperandes {
 	/**
 	 * Constructor que toma los nombres de las tablas de la base de datos del objeto tableConfig
 	 * @param tableConfig - El objeto JSON con los nombres de las tablas
-	 * @return Retorna el único objeto PersistenciaSuperandes existente - Patrón SINGLETON
+	 * @return Retorna el Ãºnico objeto PersistenciaSuperandes existente - PatrÃ³n SINGLETON
 	 */
 	public static PersistenciaSuperandes getInstance (JsonObject tableConfig)
 	{
@@ -173,7 +177,7 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
-	 * Cierra la conexión con la base de datos
+	 * Cierra la conexiÃ³n con la base de datos
 	 */
 
 	public void cerrarUnidadPersistencia ()
@@ -211,6 +215,8 @@ public class PersistenciaSuperandes {
 		sqlProveedores = new SQLProveedores(this);
 		sqlProductosOrden = new SQLProductosOrden(this);
 		sqlOrdenProductos = new SQLOrdenProductos(this);
+		sqlFacturas = new SQLFacturas(this);
+		sqlPromocion = new SQLPromocion(this);
 		sqlExistencias = new SQLExistencias(this);
 	}
 
@@ -359,9 +365,9 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
-	 * Transacción para el generador de secuencia de Parranderos
-	 * Adiciona entradas al log de la aplicación
-	 * @return El siguiente número del secuenciador de Parranderos
+	 * TransacciÃ³n para el generador de secuencia de Parranderos
+	 * Adiciona entradas al log de la aplicaciÃ³n
+	 * @return El siguiente nÃºmero del secuenciador de Parranderos
 	 */
 
 	private long nextval ()
@@ -372,9 +378,9 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
-	 * Extrae el mensaje de la exception JDODataStoreException embebido en la Exception e, que da el detalle específico del problema encontrado
-	 * @param e - La excepción que ocurrio
-	 * @return El mensaje de la excepción JDO
+	 * Extrae el mensaje de la exception JDODataStoreException embebido en la Exception e, que da el detalle especÃ­fico del problema encontrado
+	 * @param e - La excepciÃ³n que ocurrio
+	 * @return El mensaje de la excepciÃ³n JDO
 	 */
 	private String darDetalleException(Exception e) 
 	{
@@ -428,7 +434,7 @@ public class PersistenciaSuperandes {
 	}
 
 	/* ****************************************************************
-	 * 			Métodos para manejar los PROVEEDORES
+	 * 			MÃ©todos para manejar los PROVEEDORES
 	 *****************************************************************/
 
 	/**
@@ -527,7 +533,7 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
-	 * Método que consulta TODA LA INFORMACIÓN DE UN PROVEEDOR con el identificador dado. Incluye la información básica del bebedor,
+	 * MÃ©todo que consulta TODA LA INFORMACIÃ“N DE UN PROVEEDOR con el identificador dado. Incluye la informaciÃ³n bÃ¡sica del bebedor,
 	 * y los productos que este suministra
 	 * @param nit - El identificador del bebedor
 	 * @return El objeto PROVEEDOR, construido con base en las tuplas de la tablas PROVEEDORES, PROVEEN, PRODUCTOS
@@ -542,9 +548,9 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
-	 * Método privado para generar las información completa de loss productos suministrados por un proveedor: 
-	 * La información básica del producto suministrado, y la fecha y hora provistos en el formato esperado por los objetos BEBEDOR
-	 * @param tuplas - Una lista de arreglos de 12 objetos, con la información del producto y de proveen, en el siguiente orden:
+	 * MÃ©todo privado para generar las informaciÃ³n completa de loss productos suministrados por un proveedor: 
+	 * La informaciÃ³n bÃ¡sica del producto suministrado, y la fecha y hora provistos en el formato esperado por los objetos BEBEDOR
+	 * @param tuplas - Una lista de arreglos de 12 objetos, con la informaciÃ³n del producto y de proveen, en el siguiente orden:
 	 * productos.codigo, productos.nombre, productos.marca, productos.presentacion, productos.unidad_medida, productos.cantidad_en_presentacion, productos.especificacion_empacado, 
 	   productos.categoria, proveen.id_proveedor, proveen.id_producto, proveen.precio_cu, proveen.precio_unidad_medida
 
@@ -589,7 +595,7 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
-	 * Método que consulta todas las tuplas en la tabla PROVEEDORES
+	 * MÃ©todo que consulta todas las tuplas en la tabla PROVEEDORES
 	 * @return La lista de objetos PROVEEDOR, construidos con base en las tuplas de la tabla PROVEEDORES
 	 */
 
@@ -599,7 +605,7 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
-	 * Método que consulta todas las tuplas en la tabla PROVEEDORES
+	 * MÃ©todo que consulta todas las tuplas en la tabla PROVEEDORES
 	 * @return La lista de objetos PROVEEDOR, construidos con base en las tuplas de la tabla PROVEEDORES
 	 */
 
@@ -650,11 +656,11 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
-	 * Método que elimima, de manera transaccional, un PROVEEDOR y los PRODUCTOS que suministra.
-	 * Si el proveedor está referenciado en alguna otra relación, no se borra ni el proveedor NI los productos
+	 * MÃ©todo que elimima, de manera transaccional, un PROVEEDOR y los PRODUCTOS que suministra.
+	 * Si el proveedor estÃ¡ referenciado en alguna otra relaciÃ³n, no se borra ni el proveedor NI los productos
 	 * @param nit - El identificador del proveedor
-	 * @return Un arreglo de dos números que representan el número de proveedores eliminados y 
-	 * el número de productos eliminadas, respectivamente. [-1, -1] si ocurre alguna Excepción
+	 * @return Un arreglo de dos nÃºmeros que representan el nÃºmero de proveedores eliminados y 
+	 * el nÃºmero de productos eliminadas, respectivamente. [-1, -1] si ocurre alguna ExcepciÃ³n
 	 */
 
 	public long [] eliminarProveedorYProductos (int nit)
@@ -685,11 +691,11 @@ public class PersistenciaSuperandes {
 	}
 
 	/* ****************************************************************
-	 * 			Métodos para manejar PEDIDOS_SUCURSAL
+	 * 			MÃ©todos para manejar PEDIDOS_SUCURSAL
 	 *****************************************************************/
 
 	/**
-	 * Método que consulta todas las tuplas en la tabla PEDIDOS_SUCURSAL
+	 * MÃ©todo que consulta todas las tuplas en la tabla PEDIDOS_SUCURSAL
 	 * @return La lista de objetos ORDEN_PEDIDO, construidos con base en las tuplas de la tabla PEDIDOS_SUCURSAL
 	 */
 
@@ -731,7 +737,7 @@ public class PersistenciaSuperandes {
 	}	
 
 	/* ****************************************************************
-	 * 			Métodos para manejar PRODUCTOS_ORDEN
+	 * 			MÃ©todos para manejar PRODUCTOS_ORDEN
 	 *****************************************************************/
 
 	public List<ProductosOrden> darProductosOrden()
@@ -776,7 +782,7 @@ public class PersistenciaSuperandes {
 	 *****************************************************************/
 
 	/**
-	 * Permite añadir una nueva orden de pedido de un producto a un proveedor
+	 * Permite aÃ±adir una nueva orden de pedido de un producto a un proveedor
 	 */	
 
 	public long [] requerimientoFuncional9 (long rPedido, long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
@@ -864,4 +870,32 @@ public class PersistenciaSuperandes {
 	{
 		return sqlExistencias.darExistencias(pmf.getPersistenceManager());
 	}
+	
+	/** RFC1
+	 * MÃ©todo que consulta el dinero recolectado por cada sucursal
+	 * @return La lista de parejas de objetos, construidos con base en las tuplas de la tabla FACTURAS. 
+	 * El primer elemento de la pareja es el total del dinero recolectado; 
+	 * el segundo elemento es el identificador de la sucursal que le corresponde
+	 */
+	public List<Object []> darDineroRecolectadoPorCadaSucursal (Timestamp fechaInicio, Timestamp fechaFin)
+	{
+		List<Object []> respuesta = new LinkedList <Object []> ();
+		PersistenceManager pm = pmf.getPersistenceManager();
+		List<Object> tuplas = sqlFacturas.darTotalDineroRecolectado(pm, fechaInicio, fechaFin);
+        for ( Object tupla : tuplas)
+        {
+			Object [] datos = (Object []) tupla;
+			int totalDinero = ((BigDecimal) datos [0]).intValue ();
+			int idSucursal = ((BigDecimal) datos [1]).intValue ();
+
+			Object [] resp = new Object [2];
+			resp [0] = totalDinero;
+			resp [1] = idSucursal;	
+			
+			respuesta.add(resp);
+        }
+
+		return respuesta;
+	}
+	
 }
