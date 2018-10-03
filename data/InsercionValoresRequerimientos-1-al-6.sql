@@ -1,4 +1,4 @@
---Requerimiento #1
+ --Requerimiento #1
 /* Creacion de un Proveedor en la base de datos
    La relacion de un proveedor y sus productos requiere de
    la existencia de valores en la tabla Productos. Por ende 
@@ -42,6 +42,7 @@ INSERT INTO PRODUCTOS (CODIGO, NOMBRE, MARCA, PRESENTACION, UNIDAD_MEDIDA, CANTI
 -- Crear clientes
 -- Se crean dos clientes con la informacion necesaria para facturacion.
 
-INSERT INTO CLIENTES (ID, NOMBRE, CORREO, DIRECCION, NUM_IDENTIFICACION, TIPO_IDENTIFICACION) VALUES ('1', 'Javier', 'javier@example.com', 'Cll 1 #1-01', '12345', 'CC');
-INSERT INTO CLIENTES (ID, NOMBRE, CORREO, DIRECCION, NUM_IDENTIFICACION, TIPO_IDENTIFICACION) VALUES ('2', 'Geovanny', 'geovanny@example.com', 'Cll 2 #2-02', '12432', 'CC')
+INSERT INTO CLIENTES (ID, NOMBRE, CORREO, DIRECCION, NUM_IDENTIFICACION, TIPO_IDENTIFICACION) VALUES (1, 'Javier', 'javier@example.com', 'Cll 1 #1-01', 12345, 'CC');
+INSERT INTO CLIENTES (ID, NOMBRE, CORREO, DIRECCION, NUM_IDENTIFICACION, TIPO_IDENTIFICACION) VALUES (2, 'Geovanny', 'geovanny@example.com', 'Cll 2 #2-02', 12432, 'CC');
 
+COMMIT;

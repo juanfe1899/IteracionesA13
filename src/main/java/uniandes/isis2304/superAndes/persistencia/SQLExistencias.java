@@ -8,16 +8,17 @@ import java.util.List;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
+import uniandes.isis2304.superAndes.negocio.Existencias;
 import uniandes.isis2304.superAndes.negocio.OrdenProducto;
 
 /**
- * Clase que encapsula los métodos que hacen acceso a la base de datos para el concepto PROVEEDOR de SuperAndes
+ * Clase que encapsula los métodos que hacen acceso a la base de datos para el concepto EXISTENCIAS de SuperAndes
  * Nótese que es una clase que es sólo conocida en el paquete de persistencia
  * 
  * @author Geovanny Andres Gonzalez
  */
 
-class SQLOrdenProductos {
+class SQLExistencias {
 
 	/* ****************************************************************
 	 * 			Constantes
@@ -45,14 +46,14 @@ class SQLOrdenProductos {
 	 * @param pp - El Manejador de persistencia de la aplicación
 	 */
 	
-	public SQLOrdenProductos (PersistenciaSuperandes pp)
+	public SQLExistencias (PersistenciaSuperandes pp)
 	{
 		this.pp = pp;
 	}
 	
 	
 	/**
-	 * Agregar un nuevo pedido en la base de datos.
+	 * Agregar una nuevo pedido en la base de datos.
 	 * @param pm the pm Manejador de persistencia
 	 * @param id the id Identificador unico del pedido
 	 * @param idSucursal the id sucursal Identificador de la sucursal que realiza el pedido
@@ -64,9 +65,9 @@ class SQLOrdenProductos {
 	 * @return Numero de tuplas agregadas a la BD
 	 */
 	
-	public long agregarOrden(PersistenceManager pm, long id ,long idSucursal, int nit ,String estado, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion) {
-		Query qPedido = pm.newQuery(SQL, "INSERT INTO " + pp.darTablaPedidosSucursal() + "(id, id_sucursal, id_proveedor, estado, fecha_esperada, fecha_entrega, calificacion) VALUES (?,?,?,?,?,?,?)");		
-		qPedido.setParameters(id, idSucursal, nit, estado, fechaEsperada, fechaEntrega, calificacion);
+	public long agregarExistencia(PersistenceManager pm, long idProductoSuc, long idEspacio, int cantidad) {
+		Query qPedido = pm.newQuery(SQL, "INSERT INTO " + pp.darTablaExistencias() + "(ID_PRODUCTO_SUC, ID_ESPACIO_ACOMO, CANTIDAD) VALUES (?,?,?)");		
+		qPedido.setParameters(idProductoSuc, idEspacio, cantidad);
 		long tuplas = (long) qPedido.executeUnique();
 		return tuplas;
 	}
@@ -78,11 +79,10 @@ class SQLOrdenProductos {
 	 * @return El numero de tuplas eliminadas.
 	 */
 	
-	public long eliminarOrden(PersistenceManager pm, long id) {
-		Query q = pm.newQuery(SQL, "DELETE FROM " + pp.darTablaPedidosSucursal () + " WHERE " + pp.darTablaPedidosSucursal ()+ ".id = ?");
-        q.setParameters(id);
-        System.out.println("Pasando a eliminar el pedido, Consulta: " + "DELETE FROM " + pp.darTablaPedidosSucursal () + " WHERE " + pp.darTablaPedidosSucursal ()+ ".id = ?");
-        System.out.println("Donde ID es :" + id);
+	public long eliminarExistencia(PersistenceManager pm, long idProductoSuc, long idEspacio) {
+		Query q = pm.newQuery(SQL, "DELETE FROM " + pp.darTablaExistencias () + " WHERE " + pp.darTablaExistencias ()+ ".ID_PRODUCTO_SUC = ? AND " + pp.darTablaExistencias ()+ ".ID_ESPACIO_ACOMO = ?");
+        q.setParameters(idProductoSuc, idEspacio);
+        System.out.println("Pasando a eliminar el pedido, Consulta: " + "DELETE FROM " + pp.darTablaExistencias () + " WHERE " + pp.darTablaExistencias ()+ ".ID_PRODUCTO_SUC = ? AND " + pp.darTablaExistencias ()+ ".ID_ESPACIO_ACOMO = ?");        
         return (long) q.executeUnique();           
 	}
 	
@@ -94,39 +94,20 @@ class SQLOrdenProductos {
 	 * @return El objeto ORDEN_PRODUCTO a buscar.
 	 */
 	
-	public OrdenProducto darOrden (PersistenceManager pm, long id) {
-		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaPedidosSucursal () + " WHERE id = ?");
-        q.setParameters(id);        
+	public Existencias darOrden (PersistenceManager pm, long idProductoSuc, long idEspacio) {
+		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaExistencias () + " WHERE " + pp.darTablaExistencias ()+ ".ID_PRODUCTO_SUC = ? AND " + pp.darTablaExistencias ()+ ".ID_ESPACIO_ACOMO = ?");
+        q.setParameters(idProductoSuc, idEspacio);        
         q.setUnique(true);        
         Object result = q.executeUnique();        
         Object[] resultados = (Object[]) result;
         
         //Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.
-        long idPedido =  ((BigDecimal) resultados [0]).longValue ();
-		String estado = (String) resultados [3];
-		Timestamp fechaEsperada = (Timestamp) resultados [4];
-		Timestamp fechaEntrega = (Timestamp) resultados [5];
-		int calificacion = ((BigDecimal) resultados[6]).intValue();
-		OrdenProducto rsp = new OrdenProducto(calificacion, estado, fechaEsperada, fechaEntrega, idPedido);      
-         
+        long idProducto =  ((BigDecimal) resultados [0]).longValue ();
+        long idEspacioR =  ((BigDecimal) resultados [1]).longValue ();        
+		int cantidad = ((BigDecimal) resultados[2]).intValue();
+		Existencias rsp = new Existencias(cantidad, idEspacioR, idProducto);        
         return rsp;
-	}
-	
-	/**
-	 * Crea y ejecuta la sentencia SQL para encontrar la información de LAS ORDENES de la 
-	 * base de datos de SuperAndes, por sucursal
-	 * @param pm - El manejador de persistencia
-	 * @param id_sucursa - Identificador de la sucursak.
-	 * @return Una lista de objetos ORDEN_PRODUCTO pertenecientes a una sucursal.
-	 */
-	
-	public List<OrdenProducto> darOrdenesPorSucursal (PersistenceManager pm, long id_sucursal) 
-	{
-		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaPedidosSucursal () + " WHERE id_sucursal = ?");
-		q.setResultClass(OrdenProducto.class);
-		q.setParameters(id_sucursal);
-		return (List<OrdenProducto>) q.executeList();
-	}
+	}	
 	
 	/**
 	 * Crea y ejecuta la sentencia SQL para encontrar la información de LOS PROVEEDORES de la 
@@ -135,22 +116,22 @@ class SQLOrdenProductos {
 	 * @return Una lista de objetos PROVEEDOR
 	 */
 	
-	public List<OrdenProducto> darOrdenes (PersistenceManager pm)
+	public List<Existencias> darExistencias (PersistenceManager pm)
 	{
-		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaPedidosSucursal ());
-		System.out.println("Consulta: " + "SELECT * FROM " + pp.darTablaPedidosSucursal ());
-		List<OrdenProducto> rsp = new LinkedList<>();
+		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaExistencias ());
+		System.out.println("Consulta: " + "SELECT * FROM " + pp.darTablaExistencias ());
+		List<Existencias> rsp = new LinkedList<>();
 		List executeList = q.executeList();		
 		
 		for (Object obj : executeList)
 		{
 			Object [] datos = (Object []) obj;
-			long idPedido =  ((BigDecimal) datos [0]).longValue ();
-			String estado = (String) datos [3];
-			Timestamp fechaEsperada = (Timestamp) datos [4];
-			Timestamp fechaEntrega = (Timestamp) datos [5];
-			int calificacion = ((BigDecimal) datos[6]).intValue();
-			rsp.add (new OrdenProducto(calificacion, estado, fechaEsperada, fechaEntrega, idPedido));
+			
+			long idProducto =  ((BigDecimal) datos [0]).longValue ();
+	        long idEspacioR =  ((BigDecimal) datos [1]).longValue ();        
+			int cantidad = ((BigDecimal) datos[2]).intValue();
+			
+			rsp.add(new Existencias(cantidad, idEspacioR, idProducto));
 		}
 		
 		return rsp;	
@@ -164,10 +145,10 @@ class SQLOrdenProductos {
 	 * @param calificacion - La nueva calificacion para el proveedor.
 	 * @return El número de tuplas modificadas
 	 */
-	public long actualizarOrden (PersistenceManager pm, long idOrden, String nuevoEstado, Timestamp fechaEntrega, int calificacion) 
-	{
-		 Query q = pm.newQuery(SQL, "UPDATE " + pp.darTablaPedidosSucursal() + " SET estado = ?, fecha_entrega = ?, calificacion = ? WHERE id = ?");
-	     q.setParameters(nuevoEstado, fechaEntrega, calificacion, idOrden);
+	public long actualizarExistencia (PersistenceManager pm, long idProductoSuc, long idEspacio, int nuevaCantidad) 
+	{		
+		 Query q = pm.newQuery(SQL, "UPDATE " + pp.darTablaExistencias () + " SET CANTIDAD = CANTIDAD + ? WHERE ID_PRODUCTO_SUC = ? AND ID_ESPACIO_ACOMO = ?");
+	     q.setParameters(nuevaCantidad, idProductoSuc, idEspacio);
 	     return (long) q.executeUnique();            
 	}	
 }

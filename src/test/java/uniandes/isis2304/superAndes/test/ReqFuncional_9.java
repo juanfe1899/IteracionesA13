@@ -99,13 +99,12 @@ public class ReqFuncional_9
 			int calificacion = 7;
 			String codProducto = "00F4"; //Producto existente en la BD
 			int precioUnitario = 1700;
-			int cantidad = 27;
+			int cantidad = 20;
 			
 			long[] resultados = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
 			assertTrue("No se esperaba una excepcion ! resultados[0] " + resultados[0] + " resultados[1]" + resultados[1], resultados[0] > 0 && resultados[1] > 0 && resultados[1] > 0);
 			
-			List<VOOrdenProducto> ordenes = Superandes.darVOOrdenes();
-			assertEquals ("Tamanio!", 1, ordenes.size());
+			List<VOOrdenProducto> ordenes = Superandes.darVOOrdenes();			
 			assertEquals ("EN_ESPERA", "EN_ESPERA", ordenes.get(0).getEstado());
 			
 			System.out.println(ordenes.get(0).toString());
@@ -180,8 +179,7 @@ public class ReqFuncional_9
 			long[] resultados = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
 			assertTrue("No se esperaba una excepcion ! resultados[0] " + resultados[0] + " resultados[1]" + resultados[1], resultados[0] > 0 && resultados[1] > 0 && resultados[1] > 0);			
 			
-			List<VOOrdenProducto> ordenes = Superandes.darVOOrdenes();
-			assertEquals ("Tamanio!", 1, ordenes.size());
+			List<VOOrdenProducto> ordenes = Superandes.darVOOrdenes();			
 			assertEquals ("EN_ESPERA", "EN_ESPERA", ordenes.get(0).getEstado());
 			
 			//Tupla repetida	
@@ -254,8 +252,7 @@ public class ReqFuncional_9
 			long[] resultados = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
 			assertTrue("No se esperaba una excepcion ! resultados[0] " + resultados[0] + " resultados[1]" + resultados[1], resultados[0] > 0 && resultados[1] > 0 && resultados[1] > 0);
 			
-			List<VOOrdenProducto> ordenes = Superandes.darVOOrdenes();
-			assertEquals ("Tamanio!", 1, ordenes.size());
+			List<VOOrdenProducto> ordenes = Superandes.darVOOrdenes();			
 			assertEquals ("EN_ESPERA", "EN_ESPERA", ordenes.get(0).getEstado());			
 			
 			//Tupla repetida	
