@@ -18,19 +18,19 @@ public class ProductosOrden implements VOProductosOrden{
 	
 	/** El precio unitario acordado para la compra de un producto */
 	
-	private int precioUnitario;	
+	private int precio_cu_acordado;	
 	
 	/** Numero de unidades a comprar del producto */
 	
-	private int cantidadProducto;
+	private int cantidad;
 	
 	/** Identificador de la orden de pedido */
 	
-	private long idPedido;
+	private long id_pedido;
 	
 	/** Codigo hexadecimal, identificador unico del producto */
 	
-	private String codigoProducto;
+	private String id_producto;
 	
 
 	/* ****************************************************************
@@ -42,18 +42,18 @@ public class ProductosOrden implements VOProductosOrden{
 	 */
 	
 	public ProductosOrden() {
-		cantidadProducto = 0;
-		precioUnitario = 0;
-		idPedido = 0;
-		codigoProducto = "";
+		cantidad = 0;
+		precio_cu_acordado = 0;
+		id_pedido = 0;
+		id_producto = "";
 	}
 	
 		
-	public ProductosOrden(int pPrecioUnitario, int pCantidad, long pIdPedido, String pProducto) {
-		cantidadProducto = pCantidad;
-		precioUnitario = pPrecioUnitario;		
-		idPedido = pIdPedido;
-		codigoProducto = pProducto;
+	public ProductosOrden(long pIdPedido, String pProducto, int pPrecioUnitario, int pCantidad) {
+		cantidad = pCantidad;
+		precio_cu_acordado = pPrecioUnitario;		
+		id_pedido = pIdPedido;
+		id_producto = pProducto;
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class ProductosOrden implements VOProductosOrden{
 	 * @return the precio unitario
 	 */
 	public int getPrecioUnitario() {
-		return precioUnitario;
+		return precio_cu_acordado;
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class ProductosOrden implements VOProductosOrden{
 	 * @param precioUnitario the new precio unitario
 	 */
 	public void setPrecioUnitario(int precioUnitario) {
-		this.precioUnitario = precioUnitario;
+		this.precio_cu_acordado = precioUnitario;
 	}
 
     /**
@@ -81,7 +81,7 @@ public class ProductosOrden implements VOProductosOrden{
      */
 	
     public int getCantidadProducto() {
-		return cantidadProducto;
+		return cantidad;
 	}
 
 
@@ -92,7 +92,7 @@ public class ProductosOrden implements VOProductosOrden{
 	 */
     
 	public void setCantidadProducto(int cantidadProducto) {
-		this.cantidadProducto = cantidadProducto;
+		this.cantidad = cantidadProducto;
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class ProductosOrden implements VOProductosOrden{
 	 */
 	
 	public long getIdPedido() {
-		return idPedido;
+		return id_pedido;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class ProductosOrden implements VOProductosOrden{
 	 */
 	
 	public void setIdPedido(long idPedido) {
-		this.idPedido = idPedido;
+		this.id_pedido = idPedido;
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class ProductosOrden implements VOProductosOrden{
 	 * @return the codigo producto
 	 */
 	public String getCodigoProducto() {
-		return codigoProducto;
+		return id_producto;
 	}
 
 	/**
@@ -130,12 +130,12 @@ public class ProductosOrden implements VOProductosOrden{
 	 * @param codigoProducto the new codigo producto
 	 */
 	public void setCodigoProducto(String codigoProducto) {
-		this.codigoProducto = codigoProducto;
+		this.id_producto = codigoProducto;
 	}
 	
 	@Override
 	public String toString() {
-		return "Productos Ordenados [idPedido =" + idPedido + ", codigoProducto =" + codigoProducto +
-				", precioUnitario =" + precioUnitario + ", cantidad =" + cantidadProducto + "]";
+		return "Productos Ordenados [idPedido =" + id_pedido + ", codigoProducto =" + id_producto +
+				", precioUnitario =" + precio_cu_acordado + ", cantidad =" + cantidad + "]";
 	}
 }

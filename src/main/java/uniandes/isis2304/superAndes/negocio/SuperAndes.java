@@ -286,11 +286,11 @@ public class SuperAndes
 	 * 			Métodos para administración
 	 *****************************************************************/
 
-	public long [] requerimientoFuncional9 (long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
+	public long [] requerimientoFuncional9 (long rPedido, long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
 			String codProducto, int precioUnitario, int cantidad)
 	{
 		log.info ("Agregando una nueva orden de pedido del producto: " + codProducto + " para la sucursal :" + idSucursal + " entregada por el proveedor :" + nitProveedor);
-        long [] resp = pp.requerimientoFuncional9(idSucursal, nitProveedor, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);        		
+        long [] resp = pp.requerimientoFuncional9(rPedido, idSucursal, nitProveedor, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);        		
         log.info ("Pedido agregado: " + resp [0] + " Productos encargados " + resp [1]);
         return resp;
 	}
