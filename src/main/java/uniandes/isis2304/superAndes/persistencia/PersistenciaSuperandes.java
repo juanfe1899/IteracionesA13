@@ -8,6 +8,7 @@ import javax.jdo.JDODataStoreException;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 import javax.jdo.Transaction;
 
 import org.apache.log4j.Logger;
@@ -802,5 +803,16 @@ public class PersistenciaSuperandes {
             }
             pm.close();
         }		
+	} 
+	 
+	 
+	private long consultaRequerimiento10(PersistenceManager pm, long idPedido, long idSucursal)
+	{
+		String consulta = "SELECT a.id_producto_suc, a.id_espacio_acomo, c.cantidad";
+		consulta += "FROM " + darTablaExistencias() + " a," + darTablaEspacioAcomodacion() + " b," + darTablaOrdenProductos() +  " c," + darTablaProductosSucursal() + " d";
+		consulta += "c.id_pedido = ? AND b.id_sucursal = ? AND a.id_espacio_acomo = b.id AND c.id_producto = d.id_producto AND a.id_producto_suc = d.id"; 
+		Query q = pm.newQuery(SQL, consulta);
+	    q.setParameters(idPedido, idSucursal);
+	    return (long) q.executeUnique();
 	}
 }

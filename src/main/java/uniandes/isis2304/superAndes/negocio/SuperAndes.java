@@ -153,10 +153,10 @@ public class SuperAndes
 	{
         log.info ("Generando los VO de Proveedor");
         List<VOProveedor> voProveedores = new LinkedList<> ();
-        
-        for (Proveedor pvdor : pp.darProveedores())
-        {
-        	voProveedores.add (pvdor);
+        List<Proveedor> lista = pp.darProveedores();
+        for (int i = 0; i < lista.size(); i++)
+        {        	
+        	voProveedores.add (lista.get(i));
         }
        
        log.info ("Generando los VO de Proveedores: " + voProveedores.size() + " proveedores existentes");
@@ -293,8 +293,7 @@ public class SuperAndes
         long [] resp = pp.requerimientoFuncional9(rPedido, idSucursal, nitProveedor, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);        		
         log.info ("Pedido agregado: " + resp [0] + " Productos encargados " + resp [1]);
         return resp;
-	}
-	
+	}	
 	
 	/**
 	 * Elimina todas las tuplas de todas las tablas de la base de datos de SuperAndes
