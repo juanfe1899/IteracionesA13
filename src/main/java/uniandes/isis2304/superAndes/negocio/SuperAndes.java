@@ -282,6 +282,11 @@ public class SuperAndes
 		return pp.darProductosOrden();
 	}
 	
+	public List<Existencias> darExistencias()
+	{
+		return pp.darExistencias();
+	}
+	
 	/* ****************************************************************
 	 * 			Métodos para administración
 	 *****************************************************************/
@@ -292,6 +297,14 @@ public class SuperAndes
 		log.info ("Agregando una nueva orden de pedido del producto: " + codProducto + " para la sucursal :" + idSucursal + " entregada por el proveedor :" + nitProveedor);
         long [] resp = pp.requerimientoFuncional9(rPedido, idSucursal, nitProveedor, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);        		
         log.info ("Pedido agregado: " + resp [0] + " Productos encargados " + resp [1]);
+        return resp;
+	}
+	
+	public long [] requerimientoFuncional10 (long idPedido, long idSucursal, Timestamp fechaEntrega, int calificacion)
+	{
+		log.info ("Cumpliendo pedido del producto: " + idPedido + " para la sucursal :" + idSucursal);
+        long [] resp = pp.requerimientoFuncional10(idPedido, idSucursal, fechaEntrega, calificacion);        		
+        log.info ("Actualizacion pedido: " + resp [0] + " Actualizacion existencias" + resp [2]);
         return resp;
 	}	
 	

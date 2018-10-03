@@ -18,6 +18,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import uniandes.isis2304.superAndes.negocio.Existencias;
 import uniandes.isis2304.superAndes.negocio.OrdenProducto;
 import uniandes.isis2304.superAndes.negocio.Producto;
 import uniandes.isis2304.superAndes.negocio.ProductosOrden;
@@ -27,61 +28,63 @@ import uniandes.isis2304.superAndes.negocio.Proveen;
 
 public class PersistenciaSuperandes {
 
-/**
- * Clase para el manejador de persistencia del proyecto SuperAndes
- * Traduce la información entre objetos Java y tuplas de la base de datos, en ambos sentidos
- * Sigue un patrón SINGLETON (Sólo puede haber UN objeto de esta clase) para comunicarse de manera correcta
- * con la base de datos 
- * @author Geovanny Andres Gonzalez
- */
-	
+	/**
+	 * Clase para el manejador de persistencia del proyecto SuperAndes
+	 * Traduce la informaciÃ³n entre objetos Java y tuplas de la base de datos, en ambos sentidos
+	 * Sigue un patrÃ³n SINGLETON (SÃ³lo puede haber UN objeto de esta clase) para comunicarse de manera correcta
+	 * con la base de datos 
+	 * @author Geovanny Andres Gonzalez
+	 */
+
 	/* ****************************************************************
 	 * 			Constantes
 	 *****************************************************************/
-	
+
 	/**
-	 * Logger para escribir la traza de la ejecución
+	 * Logger para escribir la traza de la ejecuciÃ³n
 	 */
-	
+
 	private static Logger log = Logger.getLogger(PersistenciaSuperandes.class.getName());
-	
+
 	/**
 	 * Cadena para indicar el tipo de sentencias que se va a utilizar en una consulta
 	 */
-	
+
 	public final static String SQL = "javax.jdo.query.SQL";
-	
+
 	/* ****************************************************************
 	 * 			Atributos
 	 *****************************************************************/
 	/**
-	 * Atributo privado que es el único objeto de la clase - Patrón SINGLETON
+	 * Atributo privado que es el Ãºnico objeto de la clase - PatrÃ³n SINGLETON
 	 */
-	
+
 	private static PersistenciaSuperandes instance;
-	
+
 	/**
-	 * Fábrica de Manejadores de persistencia, para el manejo correcto de las transacciones
+	 * FÃ¡brica de Manejadores de persistencia, para el manejo correcto de las transacciones
 	 */
-	
+
 	private PersistenceManagerFactory pmf;
-	
+
 	/** Clase con las consultas para las operaciones generales en la base de datos. */
-	
+
 	private SQLUtil sqlUtil;
-	
+
 	/** Clase con las consultas para las operaciones de la clase Proveedores. */
-	
+
 	private SQLProveedores sqlProveedores;
-	
+
 	private SQLProductosOrden sqlProductosOrden;
-	
-	private SQLOrdenProductos sqlOrdenProductos;
-	
+
+	private SQLOrdenProductos sqlOrdenProductos;	
+
 	private SQLFacturas sqlFacturas;
 	
-	private SQLPromocion sqlPromocion;
-	
+	private SQLPromocion sqlPromocion;	
+
+	private SQLExistencias sqlExistencias;
+  
 	/**
 	 * Arreglo de cadenas con los nombres de las tablas de la base de datos.
 	 * Comienza con el Sequence seguido de: Categorias, Producto, Proveedores, Proveen,
@@ -89,25 +92,25 @@ public class PersistenciaSuperandes {
 	 * Pedidos_Sucursal, Orden_Productos, Clientes, Facturas, Venta_Producto, Espacio_Acomodacion, 
 	 * Existencias. 
 	 */
-	
+
 	private List <String> tablas;
-	
+
 	/**
 	 * Atributo para el acceso a las sentencias SQL propias a PersistenciaSuperAndes
 	 */	
-	
+
 	/* ****************************************************************
-	 * 			Métodos del MANEJADOR DE PERSISTENCIA
+	 * 			MÃ©todos del MANEJADOR DE PERSISTENCIA
 	 *****************************************************************/
 
 	/**
-	 * Constructor privado con valores por defecto - Patrón SINGLETON
+	 * Constructor privado con valores por defecto - PatrÃ³n SINGLETON
 	 */
 	private PersistenciaSuperandes ()
 	{
 		pmf = JDOHelper.getPersistenceManagerFactory("SuperAndes");		
 		crearClasesSQL ();
-		
+
 		// Define los nombres por defecto de las tablas de la base de datos
 		tablas = new LinkedList<String> ();
 		tablas.add("Superandes_sequence");
@@ -130,15 +133,15 @@ public class PersistenciaSuperandes {
 		tablas.add("EXISTENCIAS");	
 	}
 	/**
-	 * Constructor privado, que recibe los nombres de las tablas en un objeto Json - Patrón SINGLETON
+	 * Constructor privado, que recibe los nombres de las tablas en un objeto Json - PatrÃ³n SINGLETON
 	 * @param tableConfig - Objeto Json que contiene los nombres de las tablas y de la unidad de persistencia a manejar
 	 */
-	
+
 	private PersistenciaSuperandes (JsonObject tableConfig)
 	{
 		crearClasesSQL ();
 		tablas = leerNombresTablas (tableConfig);
-		
+
 		String unidadPersistencia = tableConfig.get ("unidadPersistencia").getAsString ();
 		log.trace ("Accediendo unidad de persistencia: " + unidadPersistencia);
 		System.out.println("Nombre de la unidad persistencia: " + unidadPersistencia);
@@ -146,7 +149,7 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
-	 * @return Retorna el único objeto PersistenciaSuperandes existente - Patrón SINGLETON
+	 * @return Retorna el Ãºnico objeto PersistenciaSuperandes existente - PatrÃ³n SINGLETON
 	 */
 	public static PersistenciaSuperandes getInstance ()
 	{
@@ -154,14 +157,14 @@ public class PersistenciaSuperandes {
 		{
 			instance = new PersistenciaSuperandes ();
 		}
-		
+
 		return instance;
 	}
-	
+
 	/**
 	 * Constructor que toma los nombres de las tablas de la base de datos del objeto tableConfig
 	 * @param tableConfig - El objeto JSON con los nombres de las tablas
-	 * @return Retorna el único objeto PersistenciaSuperandes existente - Patrón SINGLETON
+	 * @return Retorna el Ãºnico objeto PersistenciaSuperandes existente - PatrÃ³n SINGLETON
 	 */
 	public static PersistenciaSuperandes getInstance (JsonObject tableConfig)
 	{
@@ -169,26 +172,26 @@ public class PersistenciaSuperandes {
 		{
 			instance = new PersistenciaSuperandes (tableConfig);
 		}
-		
+
 		return instance;
 	}
 
 	/**
-	 * Cierra la conexión con la base de datos
+	 * Cierra la conexiÃ³n con la base de datos
 	 */
-	
+
 	public void cerrarUnidadPersistencia ()
 	{
 		pmf.close ();
 		instance = null;
 	}
-	
+
 	/**
 	 * Genera una lista con los nombres de las tablas de la base de datos
 	 * @param tableConfig - El objeto Json con los nombres de las tablas
 	 * @return La lista con los nombres del secuenciador y de las tablas
 	 */
-	
+
 	private List <String> leerNombresTablas (JsonObject tableConfig)
 	{
 		JsonArray nombres = tableConfig.getAsJsonArray("tablas") ;
@@ -198,10 +201,10 @@ public class PersistenciaSuperandes {
 		{
 			resp.add (nom.getAsString ());
 		}
-		
+
 		return resp;
 	}	
-	
+
 	/**
 	 * Crea los atributos de clases de apoyo SQL
 	 */
@@ -214,6 +217,7 @@ public class PersistenciaSuperandes {
 		sqlOrdenProductos = new SQLOrdenProductos(this);
 		sqlFacturas = new SQLFacturas(this);
 		sqlPromocion = new SQLPromocion(this);
+		sqlExistencias = new SQLExistencias(this);
 	}
 
 	/**
@@ -279,7 +283,7 @@ public class PersistenciaSuperandes {
 	{
 		return tablas.get (7);
 	}
-	
+
 	/**
 	 * @return La cadena de caracteres con el nombre de la tabla de Sucursales de parranderos
 	 */
@@ -287,7 +291,7 @@ public class PersistenciaSuperandes {
 	{
 		return tablas.get (8);
 	}
-	
+
 	/**
 	 * @return La cadena de caracteres con el nombre de la tabla de Ofrecen de parranderos
 	 */
@@ -295,7 +299,7 @@ public class PersistenciaSuperandes {
 	{
 		return tablas.get (9);
 	}
-	
+
 	/**
 	 * @return La cadena de caracteres con el nombre de la tabla de Supermercado_Proveedores de parranderos
 	 */
@@ -303,8 +307,8 @@ public class PersistenciaSuperandes {
 	{
 		return tablas.get (10);
 	}
-	
-	
+
+
 	/**
 	 * @return La cadena de caracteres con el nombre de la tabla de Pedidos_Sucursal de parranderos
 	 */
@@ -312,8 +316,8 @@ public class PersistenciaSuperandes {
 	{
 		return tablas.get (11);
 	}
-	
-	
+
+
 	/**
 	 * @return La cadena de caracteres con el nombre de la tabla de Orden_Productos de parranderos
 	 */
@@ -321,7 +325,7 @@ public class PersistenciaSuperandes {
 	{
 		return tablas.get (12);
 	}
-	
+
 	/**
 	 * @return La cadena de caracteres con el nombre de la tabla de Clientes de parranderos
 	 */
@@ -329,7 +333,7 @@ public class PersistenciaSuperandes {
 	{
 		return tablas.get (13);
 	}
-	
+
 	/**
 	 * @return La cadena de caracteres con el nombre de la tabla de Facturas de parranderos
 	 */
@@ -351,7 +355,7 @@ public class PersistenciaSuperandes {
 	{
 		return tablas.get (16);
 	}
-	
+
 	/**
 	 * @return La cadena de caracteres con el nombre de la tabla de Existencias de parranderos
 	 */
@@ -359,24 +363,24 @@ public class PersistenciaSuperandes {
 	{
 		return tablas.get (17);
 	}
-	
+
 	/**
-	 * Transacción para el generador de secuencia de Parranderos
-	 * Adiciona entradas al log de la aplicación
-	 * @return El siguiente número del secuenciador de Parranderos
+	 * TransacciÃ³n para el generador de secuencia de Parranderos
+	 * Adiciona entradas al log de la aplicaciÃ³n
+	 * @return El siguiente nÃºmero del secuenciador de Parranderos
 	 */
-	
+
 	private long nextval ()
 	{
-        long resp = sqlUtil.nextval (pmf.getPersistenceManager());
-        log.trace ("Generando secuencia: " + resp);
-        return resp;
-    }
-	
+		long resp = sqlUtil.nextval (pmf.getPersistenceManager());
+		log.trace ("Generando secuencia: " + resp);
+		return resp;
+	}
+
 	/**
-	 * Extrae el mensaje de la exception JDODataStoreException embebido en la Exception e, que da el detalle específico del problema encontrado
-	 * @param e - La excepción que ocurrio
-	 * @return El mensaje de la excepción JDO
+	 * Extrae el mensaje de la exception JDODataStoreException embebido en la Exception e, que da el detalle especÃ­fico del problema encontrado
+	 * @param e - La excepciÃ³n que ocurrio
+	 * @return El mensaje de la excepciÃ³n JDO
 	 */
 	private String darDetalleException(Exception e) 
 	{
@@ -388,7 +392,7 @@ public class PersistenciaSuperandes {
 		}
 		return resp;
 	}
-	
+
 	/**
 	 * Elimina todas las tuplas de todas las tablas de la base de datos de SuperAndes
 	 * Crea y ejecuta las sentencias SQL para cada tabla de la base de datos en el orden:
@@ -398,41 +402,41 @@ public class PersistenciaSuperandes {
 	 * 	 
 	 * @return Numero de lineas eliminadas por cada tabla	 
 	 */
-	
+
 	public long [] limpiarSuperAndes ()
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long [] resp = sqlUtil.limpiarParranderos (pm);
-            tx.commit ();
-            log.info ("Borrada la base de datos");
-            return resp;
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return new long[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,};
-        }
-        
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
-		
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long [] resp = sqlUtil.limpiarParranderos (pm);
+			tx.commit ();
+			log.info ("Borrada la base de datos");
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return new long[] {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,};
+		}
+
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
+
 	}
-	
+
 	/* ****************************************************************
-	 * 			Métodos para manejar los PROVEEDORES
+	 * 			MÃ©todos para manejar los PROVEEDORES
 	 *****************************************************************/
-	
+
 	/**
 	 * Agrega un nuevo proveedor en la base de datos
 	 * @param nit Numero de identificacion tributaria del proveedor
@@ -440,96 +444,96 @@ public class PersistenciaSuperandes {
 	 * @param calificacion Calificacion asignada al proveedor
 	 * @return El nuevo proveedor agregado a la base de datos.
 	 */
-	
+
 	public Proveedor agregarProveedor(int nit, String nombre, int calificacion) {
-		
+
 		//Inicio de la transaccion.
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx = pm.currentTransaction();
-        
-        try
-        {
-        	System.out.println("Iniciando transaccion");
-        	tx.begin();
-        	long tuplasInsertadas = sqlProveedores.agregarProveedor(pm, nombre, calificacion, nit);
-        	tx.commit(); //Guarda el proceso de la transaccion en la base de datos.
-        	System.out.println("Guardando transaccion");
-        	log.trace("Insercion del Proveedor con NIT: " + nit + ": " + tuplasInsertadas + " tuplas insertadas ");
-        	
-        	return new Proveedor(calificacion, nit, nombre);
-        }
-        
-        //Deja registro de los posibles errores que se presenten.
-        catch(Exception e) {
-        	e.printStackTrace();
-        	log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
-        	return null;
-        }
-        
-        //Hace Rollback de la transaccion y cierra la peticion.
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            
-            pm.close();
-        }       
+		Transaction tx = pm.currentTransaction();
+
+		try
+		{
+			System.out.println("Iniciando transaccion");
+			tx.begin();
+			long tuplasInsertadas = sqlProveedores.agregarProveedor(pm, nombre, calificacion, nit);
+			tx.commit(); //Guarda el proceso de la transaccion en la base de datos.
+			System.out.println("Guardando transaccion");
+			log.trace("Insercion del Proveedor con NIT: " + nit + ": " + tuplasInsertadas + " tuplas insertadas ");
+
+			return new Proveedor(calificacion, nit, nombre);
+		}
+
+		//Deja registro de los posibles errores que se presenten.
+		catch(Exception e) {
+			e.printStackTrace();
+			log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+
+		//Hace Rollback de la transaccion y cierra la peticion.
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+
+			pm.close();
+		}       
 	}
-	
+
 	/**
 	 * Elimina un proveedor en la base de datos.
 	 * @param nit Numero de identificacion tributaria del proveedor
 	 * @return El numero de tuplas eliminadas de la base de datos. -1 si hay errores.
 	 */
-	
+
 	public long eliminarProveedor(int nit) {
-		
+
 		//Inicio de la transaccion.
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx = pm.currentTransaction();
-        
-        try
-        {
-        	tx.begin();
-        	long tuplas = sqlProveedores.eliminarProveedor(pm, nit);
-        	tx.commit(); //Guarda el proceso de la transaccion en la base de datos.
-        	log.trace("Eliminacion del Proveedor con NIT: " + nit + ": " + tuplas + " tuplas eliminadas ");
-        	
-        	return tuplas;
-        }
-        
-        //Deja registro de los posibles errores que se presenten.
-        catch(Exception e) {
-        	log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
-        	return -1;
-        }
-        
-        //Hace Rollback de la transaccion y cierra la peticion.
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            
-            pm.close();
-        }       
+		Transaction tx = pm.currentTransaction();
+
+		try
+		{
+			tx.begin();
+			long tuplas = sqlProveedores.eliminarProveedor(pm, nit);
+			tx.commit(); //Guarda el proceso de la transaccion en la base de datos.
+			log.trace("Eliminacion del Proveedor con NIT: " + nit + ": " + tuplas + " tuplas eliminadas ");
+
+			return tuplas;
+		}
+
+		//Deja registro de los posibles errores que se presenten.
+		catch(Exception e) {
+			log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+
+		//Hace Rollback de la transaccion y cierra la peticion.
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+
+			pm.close();
+		}       
 	}
-	
+
 	/**
 	 * Retorna el proveedor que posee el nit dado por parametro
 	 * @param nit Nit del proveedor
 	 * @return El proveedor existente en la base de datos con el nit dado por parametro
 	 */
-	
+
 	public Proveedor darProveedor (int nit) {
 		return (Proveedor) sqlProveedores.darProveedor(pmf.getPersistenceManager(), nit);
 	}
-	
+
 	/**
-	 * Método que consulta TODA LA INFORMACIÓN DE UN PROVEEDOR con el identificador dado. Incluye la información básica del bebedor,
+	 * MÃ©todo que consulta TODA LA INFORMACIÃ“N DE UN PROVEEDOR con el identificador dado. Incluye la informaciÃ³n bÃ¡sica del bebedor,
 	 * y los productos que este suministra
 	 * @param nit - El identificador del bebedor
 	 * @return El objeto PROVEEDOR, construido con base en las tuplas de la tablas PROVEEDORES, PROVEEN, PRODUCTOS
@@ -542,14 +546,14 @@ public class PersistenciaSuperandes {
 		proveedor.setProductos(armarProductosSuministrados(sqlProveedores.darProductosOfrecidos(pm, nit)));
 		return proveedor;
 	}
-	
+
 	/**
-	 * Método privado para generar las información completa de loss productos suministrados por un proveedor: 
-	 * La información básica del producto suministrado, y la fecha y hora provistos en el formato esperado por los objetos BEBEDOR
-	 * @param tuplas - Una lista de arreglos de 12 objetos, con la información del producto y de proveen, en el siguiente orden:
+	 * MÃ©todo privado para generar las informaciÃ³n completa de loss productos suministrados por un proveedor: 
+	 * La informaciÃ³n bÃ¡sica del producto suministrado, y la fecha y hora provistos en el formato esperado por los objetos BEBEDOR
+	 * @param tuplas - Una lista de arreglos de 12 objetos, con la informaciÃ³n del producto y de proveen, en el siguiente orden:
 	 * productos.codigo, productos.nombre, productos.marca, productos.presentacion, productos.unidad_medida, productos.cantidad_en_presentacion, productos.especificacion_empacado, 
 	   productos.categoria, proveen.id_proveedor, proveen.id_producto, proveen.precio_cu, proveen.precio_unidad_medida
-	   
+
 	 * @return Una lista de arreglos de 2 objetos. El primero es un objeto PRODUCTO, el segundo corresponde a un objeto PROVEEN
 	 * 
 	 * Los valores de las columnas respuesta de la consulta siendo:
@@ -562,7 +566,7 @@ public class PersistenciaSuperandes {
 		for (Object [] tupla : tuplas)
 		{
 			Object [] productosSuministro = new Object [2];
-			
+
 			//Obtencion del objeto PRODUCTO
 			String codigo = ((String) tupla [0]);
 			String nombre = ((String) tupla [1]);
@@ -572,259 +576,303 @@ public class PersistenciaSuperandes {
 			int cantidadPresentacion = ((int) tupla[5]);
 			int especificacionEmpacado = ((int) tupla[6]);
 			long categoria = ((long) tupla [7]);
-			
+
 			//TODO Asignar la categoria a buscar obteniendo la FK categoria (Numero).
 			productosSuministro[0] = new Producto(codigo, cantidadPresentacion, marca, presentacion, especificacionEmpacado, unidad_medida, null);
-			
+
 			//Obtencion del objeto PROVEEN
 			int id_proveedor = ((int) tupla[8]);
 			String codigo_producto = ((String) tupla[9]);
 			int precio_cu = ((int) tupla[10]);
 			int precio_unidad_medida = ((int) tupla[11]);
-			
+
 			productosSuministro[1] = new Proveen(precio_cu, precio_unidad_medida, id_proveedor, codigo_producto);
-			
+
 			productosSuministrados.add (productosSuministro);
 		}
-		
+
 		return productosSuministrados;
 	}
-	
+
 	/**
-	 * Método que consulta todas las tuplas en la tabla PROVEEDORES
+	 * MÃ©todo que consulta todas las tuplas en la tabla PROVEEDORES
 	 * @return La lista de objetos PROVEEDOR, construidos con base en las tuplas de la tabla PROVEEDORES
 	 */
-	
+
 	public List<Proveedor> darProveedores ()
 	{
 		return sqlProveedores.darProveedores(pmf.getPersistenceManager());
 	}
-	
+
 	/**
-	 * Método que consulta todas las tuplas en la tabla PROVEEDORES
+	 * MÃ©todo que consulta todas las tuplas en la tabla PROVEEDORES
 	 * @return La lista de objetos PROVEEDOR, construidos con base en las tuplas de la tabla PROVEEDORES
 	 */
-	
+
 	public List<Proveedor> darProveedoresCalificacion(int calificacion)
 	{
 		return sqlProveedores.darProveedoresPorCalificacion(pmf.getPersistenceManager(), calificacion);
 	}
-	
+
 	/**
 	 * Cambia la calificacion de un proveedor en la base de datos
 	 * @param nit Numero de identificacion tributaria del proveedor
 	 * @param calificacion Nueva calificacion asignada al proveedor
 	 * @return El numero de tuplas modificadas en la base de datos.
 	 */
-	
+
 	public long cambiarCalificacionProveedor(int nit, int calificacion) {
-		
+
 		//Inicio de la transaccion.
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx = pm.currentTransaction();
-        
-        try
-        {
-        	tx.begin();
-        	long tuplas = sqlProveedores.cambiarCalificacionProveedor(pm, nit, calificacion);
-        	tx.commit(); //Guarda el proceso de la transaccion en la base de datos.
-        	log.trace("Actualizacion de la calificacion del Proveedor con NIT: " + nit + ": " +  ": nueva calificacion: " + calificacion + " "+ tuplas + " tuplas modificadas ");
-        	
-        	return tuplas;        	
-        }
-        
-        //Deja registro de los posibles errores que se presenten.
-        catch(Exception e) {
-        	log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
-        	return -1;
-        }
-        
-        //Hace Rollback de la transaccion y cierra la peticion.
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            
-            pm.close();
-        }       
+		Transaction tx = pm.currentTransaction();
+
+		try
+		{
+			tx.begin();
+			long tuplas = sqlProveedores.cambiarCalificacionProveedor(pm, nit, calificacion);
+			tx.commit(); //Guarda el proceso de la transaccion en la base de datos.
+			log.trace("Actualizacion de la calificacion del Proveedor con NIT: " + nit + ": " +  ": nueva calificacion: " + calificacion + " "+ tuplas + " tuplas modificadas ");
+
+			return tuplas;        	
+		}
+
+		//Deja registro de los posibles errores que se presenten.
+		catch(Exception e) {
+			log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+
+		//Hace Rollback de la transaccion y cierra la peticion.
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+
+			pm.close();
+		}       
 	}
-	
+
 	/**
-	 * Método que elimima, de manera transaccional, un PROVEEDOR y los PRODUCTOS que suministra.
-	 * Si el proveedor está referenciado en alguna otra relación, no se borra ni el proveedor NI los productos
+	 * MÃ©todo que elimima, de manera transaccional, un PROVEEDOR y los PRODUCTOS que suministra.
+	 * Si el proveedor estÃ¡ referenciado en alguna otra relaciÃ³n, no se borra ni el proveedor NI los productos
 	 * @param nit - El identificador del proveedor
-	 * @return Un arreglo de dos números que representan el número de proveedores eliminados y 
-	 * el número de productos eliminadas, respectivamente. [-1, -1] si ocurre alguna Excepción
+	 * @return Un arreglo de dos nÃºmeros que representan el nÃºmero de proveedores eliminados y 
+	 * el nÃºmero de productos eliminadas, respectivamente. [-1, -1] si ocurre alguna ExcepciÃ³n
 	 */
-	
+
 	public long [] eliminarProveedorYProductos (int nit)
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long [] resp = sqlProveedores.eliminarProveedorYProductos(pm, nit);
-            tx.commit();
-            return resp;
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return new long[] {-1, -1};
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long [] resp = sqlProveedores.eliminarProveedorYProductos(pm, nit);
+			tx.commit();
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return new long[] {-1, -1};
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}
-	
+
 	/* ****************************************************************
-	 * 			Métodos para manejar PEDIDOS_SUCURSAL
+	 * 			MÃ©todos para manejar PEDIDOS_SUCURSAL
 	 *****************************************************************/
-	
+
 	/**
-	 * Método que consulta todas las tuplas en la tabla PEDIDOS_SUCURSAL
+	 * MÃ©todo que consulta todas las tuplas en la tabla PEDIDOS_SUCURSAL
 	 * @return La lista de objetos ORDEN_PEDIDO, construidos con base en las tuplas de la tabla PEDIDOS_SUCURSAL
 	 */
-	
+
 	public List<OrdenProducto> darOrdenesSucursal()
 	{
 		return sqlOrdenProductos.darOrdenes(pmf.getPersistenceManager());		
 	}
-	
+
 	public OrdenProducto darOrdenPorId (long idPedido)	
 	{
 		return sqlOrdenProductos.darOrden(pmf.getPersistenceManager(), idPedido);
 	}
-	
+
 	public long eliminarOrdenSucursal (long idPedido)
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long resp = sqlOrdenProductos.eliminarOrden(pm, idPedido);
-            tx.commit();
-            return resp;
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return -1;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long resp = sqlOrdenProductos.eliminarOrden(pm, idPedido);
+			tx.commit();
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}	
-	
+
 	/* ****************************************************************
-	 * 			Métodos para manejar PRODUCTOS_ORDEN
+	 * 			MÃ©todos para manejar PRODUCTOS_ORDEN
 	 *****************************************************************/
-	
+
 	public List<ProductosOrden> darProductosOrden()
 	{
 		return sqlProductosOrden.darProductosOrden(pmf.getPersistenceManager());
 	}
-	
+
 	public long eliminarProductosOrden (long idPedido)
 	{
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long resp = sqlProductosOrden.eliminarProductosOrden(pm, idPedido);
-            tx.commit();
-            return resp;
-        }
-        catch (Exception e)
-        {
-//        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return -1;
-        }
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long resp = sqlProductosOrden.eliminarProductosOrden(pm, idPedido);
+			tx.commit();
+			return resp;
+		}
+		catch (Exception e)
+		{
+			//        	e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}
 	}	
-	
+
 	public ProductosOrden darProductosOrdenPorId (long idPedido, String codProducto)	
 	{
 		return sqlProductosOrden.darProductoOrden(pmf.getPersistenceManager(), idPedido, codProducto);
 	}
-	
+
 	/* ****************************************************************
 	 * 			Requerimientos funcionales
 	 *****************************************************************/
-	
+
 	/**
-	 * Permite añadir una nueva orden de pedido de un producto a un proveedor
+	 * Permite aÃ±adir una nueva orden de pedido de un producto a un proveedor
 	 */	
-	
-	 public long [] requerimientoFuncional9 (long rPedido, long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
+
+	public long [] requerimientoFuncional9 (long rPedido, long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
 			String codProducto, int precioUnitario, int cantidad) {
-		 
+
 		PersistenceManager pm = pmf.getPersistenceManager();
-        Transaction tx=pm.currentTransaction();
-        try
-        {
-            tx.begin();
-            long idPedido = (rPedido >= 0) ? rPedido : nextval();
-            long agregarPedido = sqlOrdenProductos.agregarOrden(pm, idPedido, idSucursal, nitProveedor, "EN_ESPERA", fechaEsperada, fechaEntrega, calificacion);
-            long agregarProductosOrden = sqlProductosOrden.agregarProductosOrden(pm, idPedido, codProducto, precioUnitario, cantidad);
-            tx.commit();
-            return new long[] {idPedido, agregarPedido, agregarProductosOrden};
-        }
-        catch (Exception e)
-        {
-        	e.printStackTrace();
-        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-        	return new long[] {-1, -1, -1};
-        }
-        
-        finally
-        {
-            if (tx.isActive())
-            {
-                tx.rollback();
-            }
-            pm.close();
-        }		
+		Transaction tx=pm.currentTransaction();
+		try
+		{
+			tx.begin();
+			long idPedido = (rPedido >= 0) ? rPedido : nextval();
+			long agregarPedido = sqlOrdenProductos.agregarOrden(pm, idPedido, idSucursal, nitProveedor, "EN_ESPERA", fechaEsperada, fechaEntrega, calificacion);
+			long agregarProductosOrden = sqlProductosOrden.agregarProductosOrden(pm, idPedido, codProducto, precioUnitario, cantidad);
+			tx.commit();
+			return new long[] {idPedido, agregarPedido, agregarProductosOrden};
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return new long[] {-1, -1, -1};
+		}
+
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}		
 	} 
-	 
-	 
-	private long consultaRequerimiento10(PersistenceManager pm, long idPedido, long idSucursal)
+
+	public long [] requerimientoFuncional10 (long idPedido, long idSucursal, Timestamp fechaEntrega, int calificacion) {
+
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx=pm.currentTransaction();
+		
+		try
+		{
+			tx.begin();			
+			long actualizacionPedido = sqlOrdenProductos.actualizarOrden(pm, idPedido, "ENTREGADO", fechaEntrega, calificacion);
+			long[] obtenerDatosConsulta = consultaReq10(pm, idPedido, idSucursal);
+			long actualizarExistencias = sqlExistencias.actualizarExistencia(pm, obtenerDatosConsulta[0], obtenerDatosConsulta[1], (int) obtenerDatosConsulta[2]);
+			tx.commit();
+			return new long[] {actualizacionPedido, 1, actualizarExistencias};
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return new long[] {-1, -1, -1};
+		}
+
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}		
+	}	 
+
+	private long[] consultaReq10(PersistenceManager pm, long idPedido, long idSucursal)
 	{
-		String consulta = "SELECT a.id_producto_suc, a.id_espacio_acomo, c.cantidad";
-		consulta += "FROM " + darTablaExistencias() + " a," + darTablaEspacioAcomodacion() + " b," + darTablaOrdenProductos() +  " c," + darTablaProductosSucursal() + " d";
-		consulta += "c.id_pedido = ? AND b.id_sucursal = ? AND a.id_espacio_acomo = b.id AND c.id_producto = d.id_producto AND a.id_producto_suc = d.id"; 
+		String consulta = "SELECT a.id_producto_suc, a.id_espacio_acomo, c.cantidad ";
+		consulta += "FROM " + darTablaExistencias() + " a, " + darTablaEspacioAcomodacion() + " b, " + darTablaOrdenProductos() +  " c, " + darTablaProductosSucursal() + " d";
+		consulta += " WHERE c.id_pedido = ? AND b.id_sucursal = ? AND a.id_espacio_acomo = b.id AND c.id_producto = d.id_producto AND a.id_producto_suc = d.id"; 
 		Query q = pm.newQuery(SQL, consulta);
-	    q.setParameters(idPedido, idSucursal);
-	    return (long) q.executeUnique();
+		q.setParameters(idPedido, idSucursal);
+
+		Object result = q.executeUnique();        
+		Object[] resultados = (Object[]) result;
+
+		//Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.
+		long idProductoSuc =  ((BigDecimal) resultados [0]).longValue ();
+		long idEspacio =  ((BigDecimal) resultados [1]).longValue ();		
+		long cantidad = ((BigDecimal) resultados[2]).longValue();		      
+
+		return new long[] {idProductoSuc, idEspacio, cantidad};
+	}
+	
+	public List<Existencias> darExistencias()
+	{
+		return sqlExistencias.darExistencias(pmf.getPersistenceManager());
 	}
 	
 	/** RFC1
-	 * Método que consulta el dinero recolectado por cada sucursal
+	 * MÃ©todo que consulta el dinero recolectado por cada sucursal
 	 * @return La lista de parejas de objetos, construidos con base en las tuplas de la tabla FACTURAS. 
 	 * El primer elemento de la pareja es el total del dinero recolectado; 
 	 * el segundo elemento es el identificador de la sucursal que le corresponde

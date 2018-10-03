@@ -1,4 +1,4 @@
---Requerimiento #1
+ --Requerimiento #1
 /* Creacion de un Proveedor en la base de datos
    La relacion de un proveedor y sus productos requiere de
    la existencia de valores en la tabla Productos. Por ende 
@@ -42,6 +42,7 @@ INSERT INTO PRODUCTOS (CODIGO, NOMBRE, MARCA, PRESENTACION, UNIDAD_MEDIDA, CANTI
 -- Requerimiento #3
 -- Crear clientes
 -- Se crean dos clientes con la informacion necesaria para facturacion.
+
 
 INSERT INTO CLIENTES (ID, NOMBRE, CORREO, DIRECCION, NUM_IDENTIFICACION, TIPO_IDENTIFICACION) VALUES ('1', 'Javier', 'javier@example.com', 'Cll 1 #1-01', '12345', 'CC');
 INSERT INTO CLIENTES (ID, NOMBRE, CORREO, DIRECCION, NUM_IDENTIFICACION, TIPO_IDENTIFICACION) VALUES ('2', 'Geovanny', 'geovanny@example.com', 'Cll 2 #2-02', '12432', 'CC');
@@ -91,6 +92,7 @@ INSERT INTO "ISIS2304A341820"."PRODUCTOS_PROMOCION" (ID_PRODUCTO, ID_PROMOCION) 
 DELETE FROM "ISIS2304A341820"."PRODUCTOS_PROMOCION" WHERE ID_PROMOCION = ?;
 -- Se elimina la promocione.
 DELETE FROM "ISIS2304A341820"."PROMOCIONES" WHERE ID = ?; 
+COMMIT;
 
 /* REQUERIMIENTOS DE CONSULTA: */
 
@@ -133,11 +135,4 @@ DELETE FROM "ISIS2304A341820"."PROMOCIONES" WHERE ID = ?;
 		  AND EX.ID_ESPACIO_ACOMO = ES.ID
 		  AND ES.ID_SUCURSAL = ?) B
 	WHERE PRODUCTOS.CODIGO = B.ID_PRODUCTO;
-
-
-
-
-
-
-
-
+  
