@@ -1,0 +1,25 @@
+{
+    "title": "Nombre de las tablas de superAndes para la aplicacion principal",
+	"unidadPersistencia": "SuperAndes",
+	"tablas":
+	[
+        "Superandes_sequence",
+		"CATEGORIAS",
+		"PRODUCTOS",
+		"PROVEEDORES",
+		"PROVEEN",
+		"PRODUCTOS_SUCURSAL",
+		"PROMOCIONES",
+		"SUPERMERCADOS",
+		"SUCURSALES",
+		"OFRECEN",
+		"SUPERMERCADO_PROVEEDORES",
+		"PEDIDOS_SUCURSAL",
+		"ORDEN_PRODUCTOS",
+		"CLIENTES",
+		"FACTURAS",
+		"VENTAS_PRODUCTO",
+		"ESPACIO_ACOMODACION",
+		"EXISTENCIAS"
+    ]
+}
