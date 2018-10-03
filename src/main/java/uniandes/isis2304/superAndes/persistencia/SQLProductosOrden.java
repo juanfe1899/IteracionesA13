@@ -102,7 +102,7 @@ class SQLProductosOrden {
 	
 	public List<ProductosOrden> darProductosOrden (PersistenceManager pm)
 	{
-		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaPedidosSucursal ());
+		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaOrdenProductos ());
 		q.setResultClass(ProductosOrden.class);
 		List<ProductosOrden> executeList = (List<ProductosOrden>) q.executeList();		
 		return executeList;

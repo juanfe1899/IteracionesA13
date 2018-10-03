@@ -84,6 +84,7 @@ public class ReqFuncional_9
 		}
 		
 		// Ahora si se pueden probar las operaciones
+		long idPedido = 2409;		
 		try
 		{
 			//Agregar dato inicial a la consulta.
@@ -100,34 +101,175 @@ public class ReqFuncional_9
 			int precioUnitario = 1700;
 			int cantidad = 27;
 			
-			long[] resultados = Superandes.requerimientoFuncional9(idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
+			long[] resultados = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
 			assertTrue("No se esperaba una excepcion ! resultados[0] " + resultados[0] + " resultados[1]" + resultados[1], resultados[0] > 0 && resultados[1] > 0 && resultados[1] > 0);
 			
-			//Verificar que si se cre�.			
-		
+			//Tupla repetida	
+			long[] resultados2 = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
+			//Deberia generar excepcion !
 			
 			//ATENCION: Este orden IMPORTA, si se hace en inverso como los productos de la orden
 			//tienen como FK a el pedido; la tupla no se borra por conservar consistencia.
-			//recuerde que no esta activada la opcion CASCADE CONSTRAINTS.
-			
-			Superandes.eliminarProductosPedido(resultados[0]);
-			Superandes.eliminarOrdenPedido(resultados[0]);
+			//recuerde que no esta activada la opcion CASCADE CONSTRAINTS.			
 		}
 		
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			String msg = "Error en la ejecución de las pruebas de UNICIDAD sobre la tabla TipoBebida.\n";
-			msg += "Revise el log de Superandes y el de datanucleus para conocer el detalle de la excepción";
-			System.out.println (msg);
-
-    		fail ("Error en las pruebas de UNICIDAD sobre la tabla TipoBebida");
+			log.info ("Prueba de insercion repetida completa. La excepcion generada es: " + e.getClass ().getName ());
+			log.info ("La causa es: " + e.getCause ().toString ());
+			String msg = "Prueba correcta se espera que debia fallar";			
+			System.out.println (msg);    		
 		}    				
 		
 		finally
 		{			
+			Superandes.eliminarProductosPedido(idPedido);
+			System.out.println("Productos del pedido: " + idPedido + " eliminados");
+			Superandes.eliminarOrdenPedido(idPedido);
+			System.out.println("Orden de pedido: " + idPedido + " eliminada");
     		Superandes.cerrarUnidadPersistencia ();    		
 		}
+	}
+	
+	@Test
+	public void integridadFKReqFuncional_9() 
+	{
+    	// Probar primero la conexión a la base de datos
+		try
+		{
+			log.info ("Probando la restricción de UNICIDAD del nombre del tipo de bebida");
+			Superandes = new SuperAndes (openConfig (CONFIG_TABLAS_A));
+		}
+		catch (Exception e)
+		{
+//			e.printStackTrace();
+			log.info ("Prueba de INTEGRIDAD FK de tablas PEDIDO_SUCURSAL y ORDEN_PEDIDO incompleta. No se pudo conectar a la base de datos !!. La excepcion generada es: " + e.getClass ().getName ());
+			log.info ("La causa es: " + e.getCause ().toString ());
+
+			String msg = "Prueba de INTEGRIDAD FK de tablas PEDIDO_SUCURSAL y ORDEN_PEDIDO incompleta. No se pudo conectar a la base de datos !!.";
+			msg += "Revise el log de Superandes y el de datanucleus para conocer el detalle de la excepción";
+			System.out.println (msg);
+			fail (msg);
+		}
+		
+		// Ahora si se pueden probar las operaciones
+		long idPedido = 9024;		
+		try
+		{
+			//Agregar dato inicial a la consulta.
+			long idSucursal = 1; //La sucursal 1 existe en la base de datos.
+			int nit = 123; //Proveedor existente en la BD
+			Date fEsperada = new Date("02/10/2018");
+			Timestamp fechaEsperada = new Timestamp(fEsperada.getTime());
+			
+			Date fEntrega = new Date("04/10/2018");
+			Timestamp fechaEntrega = new Timestamp(fEntrega.getTime());
+			
+			int calificacion = 7;
+			String codProducto = "00F4"; //Producto existente en la BD
+			int precioUnitario = 1700;
+			int cantidad = 27;
+			
+			long[] resultados = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
+			assertTrue("No se esperaba una excepcion ! resultados[0] " + resultados[0] + " resultados[1]" + resultados[1], resultados[0] > 0 && resultados[1] > 0 && resultados[1] > 0);
+			
+			//Tupla repetida	
+			long[] resultados2 = Superandes.requerimientoFuncional9(9025, 564, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
+			//Deberia generar excepcion !
+			
+			//ATENCION: Este orden IMPORTA, si se hace en inverso como los productos de la orden
+			//tienen como FK a el pedido; la tupla no se borra por conservar consistencia.
+			//recuerde que no esta activada la opcion CASCADE CONSTRAINTS.			
+		}
+		
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.info ("Prueba de insercion repetida completa. La excepcion generada es: " + e.getClass ().getName ());
+			log.info ("La causa es: " + e.getCause ().toString ());
+			String msg = "Prueba correcta se espera que debia fallar";			
+			System.out.println (msg);    		
+		}    				
+		
+		finally
+		{				
+			Superandes.eliminarProductosPedido(idPedido);
+			System.out.println("Productos del pedido: " + idPedido + " eliminados");
+			Superandes.eliminarOrdenPedido(idPedido);
+			System.out.println("Orden de pedido: " + idPedido + " eliminada");
+    		Superandes.cerrarUnidadPersistencia ();    		
+		}		
+	}
+	
+	@Test
+	public void ChecksReqFuncional_9() 
+	{
+    	// Probar primero la conexión a la base de datos
+		try
+		{
+			log.info ("Probando la restricción de UNICIDAD del nombre del tipo de bebida");
+			Superandes = new SuperAndes (openConfig (CONFIG_TABLAS_A));
+		}
+		catch (Exception e)
+		{
+//			e.printStackTrace();
+			log.info ("Prueba de INTEGRIDAD FK de tablas PEDIDO_SUCURSAL y ORDEN_PEDIDO incompleta. No se pudo conectar a la base de datos !!. La excepcion generada es: " + e.getClass ().getName ());
+			log.info ("La causa es: " + e.getCause ().toString ());
+
+			String msg = "Prueba de INTEGRIDAD FK de tablas PEDIDO_SUCURSAL y ORDEN_PEDIDO incompleta. No se pudo conectar a la base de datos !!.";
+			msg += "Revise el log de Superandes y el de datanucleus para conocer el detalle de la excepción";
+			System.out.println (msg);
+			fail (msg);
+		}
+		
+		// Ahora si se pueden probar las operaciones
+		long idPedido = 3234;		
+		try
+		{
+			//Agregar dato inicial a la consulta.
+			long idSucursal = 1; //La sucursal 1 existe en la base de datos.
+			int nit = 123; //Proveedor existente en la BD
+			Date fEsperada = new Date("02/10/2018");
+			Timestamp fechaEsperada = new Timestamp(fEsperada.getTime());
+			
+			Date fEntrega = new Date("04/10/2018");
+			Timestamp fechaEntrega = new Timestamp(fEntrega.getTime());
+			
+			int calificacion = 7;
+			String codProducto = "00F4"; //Producto existente en la BD
+			int precioUnitario = 1700;
+			int cantidad = 27;
+			
+			long[] resultados = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
+			assertTrue("No se esperaba una excepcion ! resultados[0] " + resultados[0] + " resultados[1]" + resultados[1], resultados[0] > 0 && resultados[1] > 0 && resultados[1] > 0);
+			
+			//Tupla repetida	
+			long[] resultados2 = Superandes.requerimientoFuncional9(3235, idSucursal, nit, fechaEsperada, fechaEntrega, 15, codProducto, precioUnitario, cantidad);
+			//Deberia generar excepcion !
+			
+			//ATENCION: Este orden IMPORTA, si se hace en inverso como los productos de la orden
+			//tienen como FK a el pedido; la tupla no se borra por conservar consistencia.
+			//recuerde que no esta activada la opcion CASCADE CONSTRAINTS.			
+		}
+		
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.info ("Prueba de insercion repetida completa. La excepcion generada es: " + e.getClass ().getName ());
+			log.info ("La causa es: " + e.getCause ().toString ());
+			String msg = "Prueba correcta se espera que debia fallar";			
+			System.out.println (msg);    		
+		}    				
+		
+		finally
+		{				
+			Superandes.eliminarProductosPedido(idPedido);
+			System.out.println("Productos del pedido: " + idPedido + " eliminados");
+			Superandes.eliminarOrdenPedido(idPedido);
+			System.out.println("Orden de pedido: " + idPedido + " eliminada");
+    		Superandes.cerrarUnidadPersistencia ();    		
+		}		
 	}
 
 	/* ****************************************************************

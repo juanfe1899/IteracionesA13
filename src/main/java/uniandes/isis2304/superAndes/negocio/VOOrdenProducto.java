@@ -2,6 +2,10 @@ package uniandes.isis2304.superAndes.negocio;
 
 import java.sql.Timestamp;
 
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
 /**
  * Interfaz para los métodos get de ORDEN_PRODUCTO
  * Sirve para proteger la información del negocio de posibles manipulaciones desde la interfaz o
@@ -10,6 +14,7 @@ import java.sql.Timestamp;
  * @author Geovanny Andres Gonzalez
  */
 
+@PersistenceCapable
 public interface VOOrdenProducto {
 
 	/**
@@ -17,7 +22,7 @@ public interface VOOrdenProducto {
 	 *
 	 * @return the calificacion producto
 	 */
-	
+	@Persistent
 	public int getCalificacionOrden();
 
 	/**
@@ -33,7 +38,7 @@ public interface VOOrdenProducto {
 	 *
 	 * @return the estado
 	 */
-	
+	@Persistent
 	public String getEstado();
 
 	/**
@@ -49,7 +54,7 @@ public interface VOOrdenProducto {
 	 *
 	 * @return the fecha esperada
 	 */
-	
+	@Persistent
 	public Timestamp getFechaEsperada();
 
 	/**
@@ -65,7 +70,7 @@ public interface VOOrdenProducto {
 	 *
 	 * @return the fecha entrega
 	 */
-	
+	@Persistent
 	public Timestamp getFechaEntrega();
 
 	/**
@@ -82,6 +87,7 @@ public interface VOOrdenProducto {
 	 * @return the id orden
 	 */
 	
+	@PrimaryKey
 	public long getIdOrden();
 
 	/**

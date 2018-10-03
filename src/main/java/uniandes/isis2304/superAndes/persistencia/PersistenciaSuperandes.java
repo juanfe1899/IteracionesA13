@@ -773,7 +773,7 @@ public class PersistenciaSuperandes {
 	 * Permite añadir una nueva orden de pedido de un producto a un proveedor
 	 */	
 	
-	 public long [] requerimientoFuncional9 (long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
+	 public long [] requerimientoFuncional9 (long rPedido, long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
 			String codProducto, int precioUnitario, int cantidad) {
 		 
 		PersistenceManager pm = pmf.getPersistenceManager();
@@ -781,7 +781,7 @@ public class PersistenciaSuperandes {
         try
         {
             tx.begin();
-            long idPedido = nextval();
+            long idPedido = (rPedido >= 0) ? rPedido : nextval();
             long agregarPedido = sqlOrdenProductos.agregarOrden(pm, idPedido, idSucursal, nitProveedor, "EN_ESPERA", fechaEsperada, fechaEntrega, calificacion);
             long agregarProductosOrden = sqlProductosOrden.agregarProductosOrden(pm, idPedido, codProducto, precioUnitario, cantidad);
             tx.commit();

@@ -8,6 +8,7 @@ import javax.jdo.Query;
 
 import uniandes.isis2304.superAndes.negocio.OrdenProducto;
 import uniandes.isis2304.superAndes.negocio.Proveedor;
+import uniandes.isis2304.superAndes.negocio.VOOrdenProducto;
 import uniandes.isis2304.superAndes.persistencia.PersistenciaSuperandes;
 
 /**
@@ -96,9 +97,20 @@ class SQLOrdenProductos {
 	
 	public OrdenProducto darOrden (PersistenceManager pm, long id) {
 		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaPedidosSucursal () + " WHERE id = ?");
-        q.setParameters(id);
-        q.setResultClass(OrdenProducto.class);
-        return (OrdenProducto) q.executeUnique();
+        q.setParameters(id);        
+        q.setUnique(true);
+        
+//        List result = (List) q.executeUnique();
+//        Object[] resultados = (Object[])result.iterator().next();
+//        //Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.
+//        long idOrden = (long) resultados[0];
+//        String pEstado = (String) resultados[3];
+//        Timestamp fechaEsperada = (Timestamp) resultados[4];
+//        Timestamp fechaEntrega = (Timestamp) resultados[5];
+//        int calificacion = (int) resultados[6];
+//        
+        OrdenProducto rsp = (OrdenProducto) q.executeResultUnique(OrdenProducto.class);
+        return rsp;
 	}
 	
 	/**
