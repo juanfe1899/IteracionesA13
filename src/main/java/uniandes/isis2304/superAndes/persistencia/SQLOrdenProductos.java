@@ -1,15 +1,14 @@
 package uniandes.isis2304.superAndes.persistencia;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import uniandes.isis2304.superAndes.negocio.OrdenProducto;
-import uniandes.isis2304.superAndes.negocio.Proveedor;
-import uniandes.isis2304.superAndes.negocio.VOOrdenProducto;
-import uniandes.isis2304.superAndes.persistencia.PersistenciaSuperandes;
 
 /**
  * Clase que encapsula los métodos que hacen acceso a la base de datos para el concepto PROVEEDOR de SuperAndes
@@ -98,18 +97,18 @@ class SQLOrdenProductos {
 	public OrdenProducto darOrden (PersistenceManager pm, long id) {
 		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaPedidosSucursal () + " WHERE id = ?");
         q.setParameters(id);        
-        q.setUnique(true);
+        q.setUnique(true);        
+        Object result = q.executeUnique();        
+        Object[] resultados = (Object[]) result;
         
-//        List result = (List) q.executeUnique();
-//        Object[] resultados = (Object[])result.iterator().next();
-//        //Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.
-//        long idOrden = (long) resultados[0];
-//        String pEstado = (String) resultados[3];
-//        Timestamp fechaEsperada = (Timestamp) resultados[4];
-//        Timestamp fechaEntrega = (Timestamp) resultados[5];
-//        int calificacion = (int) resultados[6];
-//        
-        OrdenProducto rsp = (OrdenProducto) q.executeResultUnique(OrdenProducto.class);
+        //Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.
+        long idPedido =  ((BigDecimal) resultados [0]).longValue ();
+		String estado = (String) resultados [3];
+		Timestamp fechaEsperada = (Timestamp) resultados [4];
+		Timestamp fechaEntrega = (Timestamp) resultados [5];
+		int calificacion = ((BigDecimal) resultados[6]).intValue();
+		OrdenProducto rsp = new OrdenProducto(calificacion, estado, fechaEsperada, fechaEntrega, idPedido);      
+         
         return rsp;
 	}
 	
@@ -140,24 +139,35 @@ class SQLOrdenProductos {
 	{
 		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaPedidosSucursal ());
 		System.out.println("Consulta: " + "SELECT * FROM " + pp.darTablaPedidosSucursal ());
-		q.setResultClass(OrdenProducto.class);
-		List<OrdenProducto> executeList = (List<OrdenProducto>) q.executeList();		
-		return executeList;
+		List<OrdenProducto> rsp = new LinkedList<>();
+		List executeList = q.executeList();		
+		
+		for (Object obj : executeList)
+		{
+			Object [] datos = (Object []) obj;
+			long idPedido =  ((BigDecimal) datos [0]).longValue ();
+			String estado = (String) datos [3];
+			Timestamp fechaEsperada = (Timestamp) datos [4];
+			Timestamp fechaEntrega = (Timestamp) datos [5];
+			int calificacion = ((BigDecimal) datos[6]).intValue();
+			rsp.add (new OrdenProducto(calificacion, estado, fechaEsperada, fechaEntrega, idPedido));
+		}
+		
+		return rsp;	
 	}	
 	
 	/**
 	 * 
-	 * Crea y ejecuta la sentencia SQL para cambiar la calificacion de un proveedor en la 
-	 * base de datos de SuperAndes
+	 * Crea y ejecuta la sentencia SQL para cambiar los datos de la orden para culminarla.
 	 * @param pm - El manejador de persistencia
 	 * @param nit - El identificador del proveedor.
 	 * @param calificacion - La nueva calificacion para el proveedor.
 	 * @return El número de tuplas modificadas
 	 */
-	public long cambiarEstadoOrden (PersistenceManager pm, long idOrden, String nuevoEstado) 
+	public long actualizarOrden (PersistenceManager pm, long idOrden, String nuevoEstado, Timestamp fechaEntrega, int calificacion) 
 	{
-		 Query q = pm.newQuery(SQL, "UPDATE " + pp.darTablaProveedores () + " SET estado = ? WHERE id = ?");
-	     q.setParameters(nuevoEstado, idOrden);
+		 Query q = pm.newQuery(SQL, "UPDATE " + pp.darTablaProveedores () + " SET estado = ?, fecha_entrega = ?, calificacion = ? WHERE id = ?");
+	     q.setParameters(nuevoEstado, fechaEntrega, calificacion, idOrden);
 	     return (long) q.executeUnique();            
 	}	
 }
