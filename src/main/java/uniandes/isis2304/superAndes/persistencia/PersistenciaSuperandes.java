@@ -1,5 +1,6 @@
 package uniandes.isis2304.superAndes.persistencia;
 
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +16,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import uniandes.isis2304.superAndes.negocio.OrdenProducto;
 import uniandes.isis2304.superAndes.negocio.Producto;
+import uniandes.isis2304.superAndes.negocio.ProductosOrden;
 import uniandes.isis2304.superAndes.negocio.Proveedor;
 import uniandes.isis2304.superAndes.negocio.Proveen;
 
@@ -68,6 +71,10 @@ public class PersistenciaSuperandes {
 	/** Clase con las consultas para las operaciones de la clase Proveedores. */
 	
 	private SQLProveedores sqlProveedores;
+	
+	private SQLProductosOrden sqlProductosOrden;
+	
+	private SQLOrdenProductos sqlOrdenProductos;
 	
 	/**
 	 * Arreglo de cadenas con los nombres de las tablas de la base de datos.
@@ -196,7 +203,9 @@ public class PersistenciaSuperandes {
 	{
 		//TODO Hacer clases SQL
 		sqlUtil = new SQLUtil(this);
-		sqlProveedores = new SQLProveedores(this);		
+		sqlProveedores = new SQLProveedores(this);
+		sqlProductosOrden = new SQLProductosOrden(this);
+		sqlOrdenProductos = new SQLOrdenProductos(this);
 	}
 
 	/**
@@ -667,5 +676,131 @@ public class PersistenciaSuperandes {
             }
             pm.close();
         }
+	}
+	
+	/* ****************************************************************
+	 * 			Métodos para manejar PEDIDOS_SUCURSAL
+	 *****************************************************************/
+	
+	/**
+	 * Método que consulta todas las tuplas en la tabla PEDIDOS_SUCURSAL
+	 * @return La lista de objetos ORDEN_PEDIDO, construidos con base en las tuplas de la tabla PEDIDOS_SUCURSAL
+	 */
+	
+	public List<OrdenProducto> darOrdenesSucursal()
+	{
+		return sqlOrdenProductos.darOrdenes(pmf.getPersistenceManager());		
+	}
+	
+	public OrdenProducto darOrdenPorId (long idPedido)	
+	{
+		return sqlOrdenProductos.darOrden(pmf.getPersistenceManager(), idPedido);
+	}
+	
+	public long eliminarOrdenSucursal (long idPedido)
+	{
+		PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx=pm.currentTransaction();
+        try
+        {
+            tx.begin();
+            long resp = sqlOrdenProductos.eliminarOrden(pm, idPedido);
+            tx.commit();
+            return resp;
+        }
+        catch (Exception e)
+        {
+//        	e.printStackTrace();
+        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+        	return -1;
+        }
+        finally
+        {
+            if (tx.isActive())
+            {
+                tx.rollback();
+            }
+            pm.close();
+        }
 	}	
+	
+	/* ****************************************************************
+	 * 			Métodos para manejar PRODUCTOS_ORDEN
+	 *****************************************************************/
+	
+	public List<ProductosOrden> darProductosOrden()
+	{
+		return sqlProductosOrden.darProductosOrden(pmf.getPersistenceManager());
+	}
+	
+	public long eliminarProductosOrden (long idPedido)
+	{
+		PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx=pm.currentTransaction();
+        try
+        {
+            tx.begin();
+            long resp = sqlProductosOrden.eliminarProductosOrden(pm, idPedido);
+            tx.commit();
+            return resp;
+        }
+        catch (Exception e)
+        {
+//        	e.printStackTrace();
+        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+        	return -1;
+        }
+        finally
+        {
+            if (tx.isActive())
+            {
+                tx.rollback();
+            }
+            pm.close();
+        }
+	}	
+	
+	public ProductosOrden darProductosOrdenPorId (long idPedido, String codProducto)	
+	{
+		return sqlProductosOrden.darProductoOrden(pmf.getPersistenceManager(), idPedido, codProducto);
+	}
+	
+	/* ****************************************************************
+	 * 			Requerimientos funcionales
+	 *****************************************************************/
+	
+	/**
+	 * Permite añadir una nueva orden de pedido de un producto a un proveedor
+	 */	
+	
+	 public long [] requerimientoFuncional9 (long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
+			String codProducto, int precioUnitario, int cantidad) {
+		 
+		PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx=pm.currentTransaction();
+        try
+        {
+            tx.begin();
+            long idPedido = nextval();
+            long agregarPedido = sqlOrdenProductos.agregarOrden(pm, idPedido, idSucursal, nitProveedor, "EN_ESPERA", fechaEsperada, fechaEntrega, calificacion);
+            long agregarProductosOrden = sqlProductosOrden.agregarProductosOrden(pm, idPedido, codProducto, precioUnitario, cantidad);
+            tx.commit();
+            return new long[] {idPedido, agregarPedido, agregarProductosOrden};
+        }
+        catch (Exception e)
+        {
+        	e.printStackTrace();
+        	log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+        	return new long[] {-1, -1, -1};
+        }
+        
+        finally
+        {
+            if (tx.isActive())
+            {
+                tx.rollback();
+            }
+            pm.close();
+        }		
+	}
 }
