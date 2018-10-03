@@ -236,4 +236,9 @@ public class OrdenProducto implements VOOrdenProducto{
 		infoSuper += "]";
 		return infoSuper;
 	}
+	
+	public boolean equals (Object tb) {
+		OrdenProducto e = (OrdenProducto) tb;
+		return idOrden == e.idOrden;
+	}
 }

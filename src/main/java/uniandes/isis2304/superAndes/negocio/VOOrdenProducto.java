@@ -14,7 +14,6 @@ import javax.jdo.annotations.PrimaryKey;
  * @author Geovanny Andres Gonzalez
  */
 
-@PersistenceCapable
 public interface VOOrdenProducto {
 
 	/**
@@ -22,81 +21,41 @@ public interface VOOrdenProducto {
 	 *
 	 * @return the calificacion producto
 	 */
-	@Persistent
+	
 	public int getCalificacionOrden();
 
-	/**
-	 * Sets the calificacion producto.
-	 *
-	 * @param calificacionProducto the new calificacion producto
-	 */
 	
-	public void setCalificacionOrden(int calificacionProducto);
-
 	/**
 	 * Gets the estado.
 	 *
 	 * @return the estado
 	 */
-	@Persistent
-	public String getEstado();
-
-	/**
-	 * Sets the estado.
-	 *
-	 * @param estado the new estado
-	 */
 	
-	public void setEstado(String estado);
+	public String getEstado();	
 
 	/**
 	 * Gets the fecha esperada.
 	 *
 	 * @return the fecha esperada
 	 */
-	@Persistent
-	public Timestamp getFechaEsperada();
-
-	/**
-	 * Sets the fecha esperada.
-	 *
-	 * @param fechaEsperada the new fecha esperada
-	 */
 	
-	public void setFechaEsperada(Timestamp fechaEsperada);
+	public Timestamp getFechaEsperada();	
 
 	/**
 	 * Gets the fecha entrega.
 	 *
 	 * @return the fecha entrega
 	 */
-	@Persistent
-	public Timestamp getFechaEntrega();
-
-	/**
-	 * Sets the fecha entrega.
-	 *
-	 * @param fechaEntrega the new fecha entrega
-	 */
 	
-	public void setFechaEntrega(Timestamp fechaEntrega);
-
+	public Timestamp getFechaEntrega();
+	
 	/**
 	 * Gets the id orden.
 	 *
 	 * @return the id orden
-	 */
+	 */	
 	
-	@PrimaryKey
-	public long getIdOrden();
-
-	/**
-	 * Sets the id orden.
-	 *
-	 * @param idOrden the new id orden
-	 */
-	
-	public void setIdOrden(long idOrden);
+	public long getIdOrden();	
 	
 	/**
 	 * Devuelve la informacion de una orden de un producto
@@ -106,5 +65,12 @@ public interface VOOrdenProducto {
 	@Override
 	public String toString();
 	
-	public String toStringCompleto();
+	/**
+	 * Define la igualdad dos Tipos de bebida
+	 * @param tb - El tipo de bebida a comparar
+	 * @return true si tienen el mismo identificador y el mismo nombre
+	 */
+	
+	@Override
+	public boolean equals (Object tb); 
 }
