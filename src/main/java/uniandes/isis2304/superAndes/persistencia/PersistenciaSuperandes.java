@@ -1,5 +1,6 @@
 package uniandes.isis2304.superAndes.persistencia;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,6 +77,10 @@ public class PersistenciaSuperandes {
 	private SQLProductosOrden sqlProductosOrden;
 	
 	private SQLOrdenProductos sqlOrdenProductos;
+	
+	private SQLFacturas sqlFacturas;
+	
+	private SQLPromocion sqlPromocion;
 	
 	/**
 	 * Arreglo de cadenas con los nombres de las tablas de la base de datos.
@@ -207,6 +212,8 @@ public class PersistenciaSuperandes {
 		sqlProveedores = new SQLProveedores(this);
 		sqlProductosOrden = new SQLProductosOrden(this);
 		sqlOrdenProductos = new SQLOrdenProductos(this);
+		sqlFacturas = new SQLFacturas(this);
+		sqlPromocion = new SQLPromocion(this);
 	}
 
 	/**
@@ -815,4 +822,32 @@ public class PersistenciaSuperandes {
 	    q.setParameters(idPedido, idSucursal);
 	    return (long) q.executeUnique();
 	}
+	
+	/** RFC1
+	 * Método que consulta el dinero recolectado por cada sucursal
+	 * @return La lista de parejas de objetos, construidos con base en las tuplas de la tabla FACTURAS. 
+	 * El primer elemento de la pareja es el total del dinero recolectado; 
+	 * el segundo elemento es el identificador de la sucursal que le corresponde
+	 */
+	public List<Object []> darDineroRecolectadoPorCadaSucursal (Timestamp fechaInicio, Timestamp fechaFin)
+	{
+		List<Object []> respuesta = new LinkedList <Object []> ();
+		PersistenceManager pm = pmf.getPersistenceManager();
+		List<Object> tuplas = sqlFacturas.darTotalDineroRecolectado(pm, fechaInicio, fechaFin);
+        for ( Object tupla : tuplas)
+        {
+			Object [] datos = (Object []) tupla;
+			int totalDinero = ((BigDecimal) datos [0]).intValue ();
+			int idSucursal = ((BigDecimal) datos [1]).intValue ();
+
+			Object [] resp = new Object [2];
+			resp [0] = totalDinero;
+			resp [1] = idSucursal;	
+			
+			respuesta.add(resp);
+        }
+
+		return respuesta;
+	}
+	
 }

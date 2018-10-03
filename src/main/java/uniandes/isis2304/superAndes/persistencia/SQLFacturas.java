@@ -113,22 +113,25 @@ class SQLFacturas {
 		return executeList;
 	}
 	
-	/**
-	 * Crea y ejecuta la sentencia SQL para encontrar la información del total de dinero recolectado 
-	 * por cada sucursal (dentro de lsa fechas dadas) de la 
-	 * base de datos de SuperAndes
-	 * @param pm - El manejador de persistencia
-	 * @param fechaInicio fecha desde la cual se quieren realizar las cuentas
-	 * @param fehcaFin fecha hasta la cual se quieren realizar las cuentas
-	 * @return Una lista de objetos Factura
-	 */
 	
-	public List<Factura> darTotalDineroRecolectado (PersistenceManager pm, Timestamp fechaInicio, Timestamp fechaFin)
+	/**
+	 * Crea y ejecuta la sentencia SQL para encontrar la información de el dinero recogido por cada sucursal de la 
+	 * base de datos de superAndes.
+	 * @param pm - El manejador de persistencia
+	 * @return Una lista de arreglos de objetos, de tamaño 2. Los elementos del arreglo corresponden a la suma total recolectada 
+	 * y el identificador de la sucursal que le corresponde
+	 */
+	public List<Object> darTotalDineroRecolectado (PersistenceManager pm, Timestamp fechaInicio, Timestamp fechaFin)
 	{
-		Query q = pm.newQuery(SQL, "SELECT SUM(TOTAL), ID_SUCURSAL FROM " + pp.darTablaFacturas () + "WHERE FECHA BETWEEN ? AND ? 	GROUP BY ID_SUCURSAL");
-		q.setResultClass(Factura.class);
-		List<Factura> executeList = (List<Factura>) q.executeList();		
-		return executeList;
+	    String sql = "SELECT SUM(TOTAL) AS DINERO, ID_SUCURSAL AS SUCURSAL";
+	    sql += " FROM " + pp.darTablaFacturas ();
+	    sql += " WHERE FECHA BETWEEN ? AND ?";
+	    sql	+= " GROUP BY ID_SUCURSAL";
+	    
+		
+	    Query q = pm.newQuery(SQL, sql);
+		q.setParameters(fechaInicio, fechaFin);
+		return q.executeList();
 	}
 	
 }
