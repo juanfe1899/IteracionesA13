@@ -20,11 +20,11 @@ public class Factura implements VOFactura{
 	
 	/** Cliente que realizo la compra */
 	
-	private Cliente cliente;
+	private long cliente;
 	
 	/** Sucursal en la que se realizo la compra */
 	
-	private Sucursal sucursalCompra;
+	private long sucursalCompra;
 	
 	/**
 	 * Representa los productos facturados y la cantidad de productos a comprar.
@@ -47,8 +47,8 @@ public class Factura implements VOFactura{
 		fechaFacturacion = new Timestamp(0);
 		idFactura = 0;
 		total = 0;
-		cliente = null;
-		sucursalCompra = null;		
+		cliente = 0;
+		sucursalCompra = 0;		
 		productosFacturados = new LinkedList<>();
 	}
 	
@@ -62,7 +62,7 @@ public class Factura implements VOFactura{
 	 * @param pSucursal the sucursal
 	 */
 	
-	public Factura (Timestamp pFecha, long pId, int pTotal, Cliente pCliente, Sucursal pSucursal) {
+	public Factura (Timestamp pFecha, long pId, int pTotal, long pCliente, long pSucursal) {
 		fechaFacturacion = pFecha;
 		idFactura = pId;
 		total = pTotal;
@@ -116,28 +116,28 @@ public class Factura implements VOFactura{
 	/**
 	 * @return the cliente
 	 */
-	public Cliente getCliente() {
+	public long getCliente() {
 		return cliente;
 	}
 
 	/**
 	 * @param cliente the cliente to set
 	 */
-	public void setCliente(Cliente cliente) {
+	public void setCliente(long cliente) {
 		this.cliente = cliente;
 	}
 
 	/**
 	 * @return the sucursalCompra
 	 */
-	public Sucursal getSucursalCompra() {
+	public long getSucursalCompra() {
 		return sucursalCompra;
 	}
 
 	/**
 	 * @param sucursalCompra the sucursalCompra to set
 	 */
-	public void setSucursalCompra(Sucursal sucursalCompra) {
+	public void setSucursalCompra(long sucursalCompra) {
 		this.sucursalCompra = sucursalCompra;
 	}
 
@@ -158,7 +158,7 @@ public class Factura implements VOFactura{
 	@Override
 	public String toString() {
 		return "Factura [idFactura =" + idFactura + ", fecha =" + formatoFecha.format(fechaFacturacion) + 
-				", total =" + total + "\n Cliente =" + cliente.toString() + "\n Sucursal =" + sucursalCompra.toString() + "]";
+				", total =" + total + "\n Cliente =" + cliente + "\n Sucursal =" + sucursalCompra + "]";
 	}
 	
 	/**

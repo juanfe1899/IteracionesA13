@@ -65,7 +65,7 @@ public interface VOProductosSucursal {
 	 * @return the producto
 	 */
 	
-	public Producto getProducto();
+	public String getProducto();
 
 	/**
 	 * Sets the producto.
@@ -73,7 +73,7 @@ public interface VOProductosSucursal {
 	 * @param producto the new producto
 	 */
 	
-	public void setProducto(Producto producto);
+	public void setProducto(String producto);
 	
 	/**
 	 * @return the promociones

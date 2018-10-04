@@ -38,22 +38,22 @@ public interface VOFactura {
 	/**
 	 * @return the cliente
 	 */
-	public Cliente getCliente();
+	public long getCliente();
 
 	/**
 	 * @param cliente the cliente to set
 	 */
-	public void setCliente(Cliente cliente);
+	public void setCliente(long cliente);
 
 	/**
 	 * @return the sucursalCompra
 	 */
-	public Sucursal getSucursalCompra();
+	public long getSucursalCompra();
 
 	/**
 	 * @param sucursalCompra the sucursalCompra to set
 	 */
-	public void setSucursalCompra(Sucursal sucursalCompra);
+	public void setSucursalCompra(long sucursalCompra);
 
 	/**
 	 * @return the productosFacturados
