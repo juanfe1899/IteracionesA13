@@ -21,7 +21,9 @@ import com.google.gson.JsonObject;
 import uniandes.isis2304.superAndes.negocio.Existencias;
 import uniandes.isis2304.superAndes.negocio.OrdenProducto;
 import uniandes.isis2304.superAndes.negocio.Producto;
+import uniandes.isis2304.superAndes.negocio.ProductoSucursal;
 import uniandes.isis2304.superAndes.negocio.ProductosOrden;
+import uniandes.isis2304.superAndes.negocio.Promocion;
 import uniandes.isis2304.superAndes.negocio.Proveedor;
 import uniandes.isis2304.superAndes.negocio.Proveen;
 
@@ -84,6 +86,10 @@ public class PersistenciaSuperandes {
 	private SQLPromocion sqlPromocion;	
 
 	private SQLExistencias sqlExistencias;
+	
+	private SQLVentasProducto sqlVentas;
+	
+	private SQLProductosSucursal sqlProductosSucursal;
   
 	/**
 	 * Arreglo de cadenas con los nombres de las tablas de la base de datos.
@@ -214,10 +220,12 @@ public class PersistenciaSuperandes {
 		sqlUtil = new SQLUtil(this);
 		sqlProveedores = new SQLProveedores(this);
 		sqlProductosOrden = new SQLProductosOrden(this);
+		sqlProductosSucursal = new SQLProductosSucursal(this);
 		sqlOrdenProductos = new SQLOrdenProductos(this);
 		sqlFacturas = new SQLFacturas(this);
 		sqlPromocion = new SQLPromocion(this);
 		sqlExistencias = new SQLExistencias(this);
+		sqlVentas = new SQLVentasProducto(this);
 	}
 
 	/**
@@ -871,6 +879,82 @@ public class PersistenciaSuperandes {
 		return sqlExistencias.darExistencias(pmf.getPersistenceManager());
 	}
 	
+	public long [] requerimientoFuncional11 (long idFactura, long idCliente, long idSucursal, String codProducto, int cantidad, Timestamp fecha) {
+
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx=pm.currentTransaction();
+		
+		try
+		{
+			tx.begin();
+			//Buscar el producto en la sucursal.
+			ProductoSucursal p = sqlProductosSucursal.darProductoSuc(pm, codProducto, idSucursal);
+			Object[] o = consultaReq11Promocion(pm, p.getIdProductoSucursal(), cantidad);			
+			
+			//Verificar promociones
+			String tipo = (String) o[1];			
+			if (!tipo.startsWith("-")) {
+				int e = p.verificarPromo(tipo);
+				cantidad = (e == -1) ? cantidad : e;
+			}			
+			
+			int total = cantidad * p.getPrecioUnitario();
+			long crearFactura = sqlFacturas.agregarFactura(pm, fecha, total, idFactura, idSucursal, idCliente);
+			long venta = sqlVentas.agregarVenta(pm, p.getIdProductoSucursal(), idFactura, cantidad);
+			tx.commit();
+			return new long[] {crearFactura, venta};
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return new long[] {-1, -1, -1};
+		}
+
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}		
+	}	 
+
+	private Object[] consultaReq11Promocion(PersistenceManager pm, long idProductoSuc, int cantidad)
+	{
+		String consulta = "select b.id ,b.tipo ";
+		consulta += "FROM " + "PRODUCTOS_PROMOCION" + " a, " + darTablaPromociones() + " b";
+		consulta += " WHERE a.ID_PRODUCTO_SUC = ? AND a.id_promocion = b.id AND b.unidades_disponibles > 0 AND b.fecha_inicio > b.fecha_final"; 
+		Query q = pm.newQuery(SQL, consulta);
+		q.setParameters(idProductoSuc);
+
+		Object result = q.executeUnique();        
+		Object[] resultados = (Object[]) result;
+		
+		long idPromocion = -1;
+		long update = -1;
+		String tipoPromo = "-";
+		
+		if (resultados != null && resultados.length > 0) {
+  		 //Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.			
+		 idPromocion =  ((BigDecimal) resultados [0]).longValue ();
+		 tipoPromo =  (String) resultados [1];
+		 
+		 String consulta2 = "UPDATE PROMOCIONES";
+		 consulta2 += "SET UNIDADES_DISPONIBLES = UNIDADES_DISPONIBLES - ?";
+		 consulta2 += " WHERE ID = ?";		 
+		 
+		 Query q2 = pm.newQuery(SQL, consulta2);
+		 q2.setParameters(idPromocion, cantidad);
+		 update = (long) q2.executeUnique();
+		}
+		
+		return new Object[] {update, tipoPromo};
+	}
+
+	
+	
 	/** RFC1
 	 * Método que consulta el dinero recolectado por cada sucursal
 	 * @return La lista de parejas de objetos, construidos con base en las tuplas de la tabla FACTURAS. 
@@ -896,6 +980,17 @@ public class PersistenciaSuperandes {
         }
 
 		return respuesta;
+	}
+	
+	/**
+	 * RFC2
+	 * Dar las 20 promociones mas populares
+	 * Las promociones son aquellas que mas dinero vendieron.
+	 */
+	
+	public List<Promocion> dar20PromocionesMasPopulares()
+	{
+		return sqlPromocion.dar20PromocionesMasPopulares(pmf.getPersistenceManager());
 	}
 	
 }

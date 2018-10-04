@@ -28,7 +28,9 @@ public class ProductoSucursal implements VOProductosSucursal{
 	
 	/** Informacion del producto en catalogo general. */
 	
-	private Producto producto;
+	private String producto;
+	
+	private long idSucursal;
 	
 	/** Record historico de promociones del producto */
 	
@@ -45,11 +47,11 @@ public class ProductoSucursal implements VOProductosSucursal{
 		promociones = new LinkedList<>();
 	}
 	
-	public ProductoSucursal(int pCantidad, long pIdProducto, int pPrecioUnitario, Producto pProducto) {
+	public ProductoSucursal(int pCantidad, long pIdProducto, long idSucursal,int pPrecioUnitario, String codProducto) {
 		cantidadReorden = pCantidad;
 		idProductoSucursal = pIdProducto;
 		precioUnitario = pPrecioUnitario;
-		producto = pProducto;
+		producto = codProducto;
 		promociones = new LinkedList<>();
 	}
 
@@ -111,26 +113,6 @@ public class ProductoSucursal implements VOProductosSucursal{
 	
 	public void setPrecioUnitario(int precioUnitario) {
 		this.precioUnitario = precioUnitario;
-	}
-
-	/**
-	 * Gets the producto.
-	 *
-	 * @return the producto
-	 */
-	
-	public Producto getProducto() {
-		return producto;
-	}
-
-	/**
-	 * Sets the producto.
-	 *
-	 * @param producto the new producto
-	 */
-	
-	public void setProducto(Producto producto) {
-		this.producto = producto;
 	}	
 	
 	/**
@@ -147,10 +129,45 @@ public class ProductoSucursal implements VOProductosSucursal{
 		this.promociones = promociones;
 	}
 
+	public long getIdSucursal() {
+		return idSucursal;
+	}
+
+	public void setIdSucursal(long idSucursal) {
+		this.idSucursal = idSucursal;
+	}
+	
+	public String getProducto(){
+		return producto;
+	}
+
+	public void setProducto(String producto) {
+		this.producto = producto;
+	}
+
 	@Override
 	public String toString() {
 		return "Producto Sucursal [idProductoSucursal =" + idProductoSucursal + ", precioUnitario"
 				+ ", cantidadReorden =" + cantidadReorden + "\n\n Informacion detallada \n" + producto.toString() + "]";
+	}
+	
+	public int verificarPromo(String tipo)
+	{
+		if(tipo.startsWith("P"))
+		{
+			String[] rsp = tipo.split("R");
+			String o2 = rsp[1];
+			String[] o3 = o2.split("X");
+			return Integer.parseInt(o3[1]);
+		}
+		
+		else
+		{
+			String o2 = tipo.split("R")[1];
+			int descuento = Integer.parseInt(o2);
+			precioUnitario = precioUnitario * descuento;
+			return -1;
+		}
 	}
 	
 	/**

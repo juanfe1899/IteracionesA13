@@ -306,7 +306,18 @@ public class SuperAndes
         long [] resp = pp.requerimientoFuncional10(idPedido, idSucursal, fechaEntrega, calificacion);        		
         log.info ("Actualizacion pedido: " + resp [0] + " Actualizacion existencias" + resp [2]);
         return resp;
-	}	
+	}
+	
+	public long[] requerimientoFuncional11(long idFactura, long idCliente, long idSucursal, String codProducto, int cantidad, Timestamp fecha)
+	{
+		long[] resp = pp.requerimientoFuncional11(idFactura, idCliente, idSucursal, codProducto, cantidad, fecha);
+		return resp;
+	}
+	
+	public List<Promocion> requerimientoConsulta2()
+	{
+		return pp.dar20PromocionesMasPopulares();
+	}
 	
 	/**
 	 * Elimina todas las tuplas de todas las tablas de la base de datos de SuperAndes

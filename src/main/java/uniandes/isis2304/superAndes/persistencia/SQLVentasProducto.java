@@ -1,23 +1,26 @@
 package uniandes.isis2304.superAndes.persistencia;
 
-import java.sql.Timestamp;
-import java.util.List;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
 import uniandes.isis2304.superAndes.negocio.Factura;
+import uniandes.isis2304.superAndes.negocio.OrdenProducto;
+import uniandes.isis2304.superAndes.negocio.VentaProducto;
 import uniandes.isis2304.superAndes.persistencia.PersistenciaSuperandes;
 
 /**
- * Clase que encapsula los métodos que hacen acceso a la base de datos para el concepto Factura de SuperAndes
+ * Clase que encapsula los métodos que hacen acceso a la base de datos para el concepto VENTAS_PRODUCTO de SuperAndes
  * Nótese que es una clase que es sólo conocida en el paquete de persistencia
  * 
  * @author Geovanny Andres Gonzalez
  */
 
-class SQLFacturas {
+class SQLVentasProducto {
 
 	/* ****************************************************************
 	 * 			Constantes
@@ -45,7 +48,7 @@ class SQLFacturas {
 	 * @param pp - El Manejador de persistencia de la aplicación
 	 */
 	
-	public SQLFacturas (PersistenciaSuperandes pp)
+	public SQLVentasProducto (PersistenciaSuperandes pp)
 	{
 		this.pp = pp;
 	}
@@ -61,13 +64,10 @@ class SQLFacturas {
 	 * @return El número de tuplas insertadas
 	 */
 	
-	public long agregarFactura(PersistenceManager pm, Timestamp fecha, int total, long id, long idSucursal, long idCliente) {
-		System.out.println("Crear Query de insercion");	
-		Query qFactura = pm.newQuery(SQL, "INSERT INTO " + pp.darTablaFacturas() + "(id, fecha, total, id_cliente, id_sucursal) values (?,?,?,?,?)");
-		qFactura.setParameters(id, fecha, total, idCliente, idSucursal);
-		System.out.println("Inicio de ejecucion de Query" + "Consulta: " + "INSERT INTO " + pp.darTablaFacturas() + "(id, fecha, total, id_cliente, id_sucursal) values (?,?,?,?,?)");
-		long tuplas = (long) qFactura.executeUnique();
-		System.out.println("[SQLFactura] Tuplas modificadas: " + tuplas);
+	public long agregarVenta(PersistenceManager pm, long idProductoSuc, long idFactura, int cantidad) {
+		Query qFactura = pm.newQuery(SQL, "INSERT INTO " + pp.darTablaVentasProducto() + "(ID_PRODUCTO_SUC, ID_FACTURA, CANTIDAD) values (?,?,?)");
+		qFactura.setParameters(idProductoSuc, idFactura, cantidad);		
+		long tuplas = (long) qFactura.executeUnique();		
 		return tuplas;
 	}
 	
@@ -78,9 +78,9 @@ class SQLFacturas {
 	 * @return El numero de tuplas eliminadas.
 	 */
 	
-	public long eliminarFactura(PersistenceManager pm, int id) {
-		Query q = pm.newQuery(SQL, "DELETE FROM " + pp.darTablaFacturas() + " WHERE id = ?");
-        q.setParameters(id);
+	public long eliminarVenta(PersistenceManager pm, int idFactura) {
+		Query q = pm.newQuery(SQL, "DELETE FROM " + pp.darTablaVentasProducto() + " WHERE ID_FACTURA = ?");
+        q.setParameters(idFactura);
         return (long) q.executeUnique();           
 	}
 	
@@ -92,22 +92,20 @@ class SQLFacturas {
 	 * @return El objeto Factura que tiene el identificador dado
 	 */
 	
-	public Factura darFactura(PersistenceManager pm, int id) {
-		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaFacturas () + " WHERE id = ?");
-        q.setParameters(id);
-
+	public VentaProducto darVenta(PersistenceManager pm, int id) {
+		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaVentasProducto () + " WHERE id = ?");
+        q.setParameters(id);        
+        
         Object result = q.executeUnique();        
         Object[] resultados = (Object[]) result;
         
         //Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.
-        long idFactura =  ((BigDecimal) resultados[0]).longValue ();
-        Timestamp fecha = (Timestamp) resultados[1];
-        int total = ((BigDecimal) resultados[2]).intValue();
-        long idCliente =((BigDecimal) resultados[3]).longValue ();
-        long idSucursal = ((BigDecimal) resultados[4]).longValue ();
-		Factura rsp = new Factura(fecha, idFactura, total, idCliente, idSucursal);      
+        long idProductoSuc =  ((BigDecimal) resultados[0]).longValue ();
+        int idFactura =  ((BigDecimal) resultados[1]).intValue ();
+        int cantidad = ((BigDecimal) resultados[2]).intValue();		
+		VentaProducto rsp = new VentaProducto(idFactura, cantidad, idProductoSuc);      
          
-        return rsp;
+        return rsp;        
 	}
 	
 	/**
@@ -117,33 +115,23 @@ class SQLFacturas {
 	 * @return Una lista de objetos Factura
 	 */
 	
-	public List<Factura> darFactura (PersistenceManager pm)
+	public List<VentaProducto> darVentas (PersistenceManager pm)
 	{
 		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaFacturas ());
 		q.setResultClass(Factura.class);
-		List<Factura> executeList = (List<Factura>) q.executeList();		
-		return executeList;
-	}
-	
-	
-	/**
-	 * Crea y ejecuta la sentencia SQL para encontrar la información de el dinero recogido por cada sucursal de la 
-	 * base de datos de superAndes.
-	 * @param pm - El manejador de persistencia
-	 * @return Una lista de arreglos de objetos, de tamaño 2. Los elementos del arreglo corresponden a la suma total recolectada 
-	 * y el identificador de la sucursal que le corresponde
-	 */
-	public List<Object> darTotalDineroRecolectado (PersistenceManager pm, Timestamp fechaInicio, Timestamp fechaFin)
-	{
-	    String sql = "SELECT SUM(TOTAL) AS DINERO, ID_SUCURSAL AS SUCURSAL";
-	    sql += " FROM " + pp.darTablaFacturas ();
-	    sql += " WHERE FECHA BETWEEN ? AND ?";
-	    sql	+= " GROUP BY ID_SUCURSAL";
-	    
+		List<VentaProducto> rsp = new LinkedList<>();
+		List executeList = q.executeList();		
 		
-	    Query q = pm.newQuery(SQL, sql);
-		q.setParameters(fechaInicio, fechaFin);
-		return q.executeList();
-	}
-	
+		for (Object obj : executeList)
+		{
+			Object [] datos = (Object []) obj;
+			long idProductoSuc =  ((BigDecimal) datos[0]).longValue ();
+	        int idFactura =  ((BigDecimal) datos[1]).intValue ();
+	        int cantidad = ((BigDecimal) datos[2]).intValue();		
+			VentaProducto otro = new VentaProducto(idFactura, cantidad, idProductoSuc);
+			rsp.add(otro);
+		}
+		
+		return rsp;
+	}	
 }
