@@ -1,6 +1,6 @@
-﻿Iteracion #1
+﻿Iteracion #2
 
-Geovanny Andrés González - 201719528
+
 Juan Felipe Sanchez Guerrero - 201618582
 Grupo A-13
 
@@ -16,6 +16,3 @@ Instalacion:
 Para la instalacion del aplicativo importe el proyecto en Eclipse
 y ejecute las pruebas destinadas en la carpeta src/test/java
 
-Saludo cordial.
-
-Geovanny.
