@@ -10,9 +10,9 @@ public interface VOCarrito {
 	public long getIdCarrito();
 
 	/**
-	 * @param idFactura the idCarrito to set
+	 * @param idCarrito the idCarrito to set
 	 */
-	public void setIdCarrito(long idFactura);
+	public void setIdCarrito(long idCarrito);
 
 	/**
 	 * @return the total

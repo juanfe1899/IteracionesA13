@@ -230,8 +230,8 @@ public class SuperAndes
 	
 	/**
 	 * Encuentra todos los tipos de bebida en Parranderos y los devuelve como una lista de VOTipoBebida
-	 * Adiciona entradas al log de la aplicación
-	 * @return Una lista de objetos VOTipoBebida con todos los tipos de bebida que conoce la aplicación, llenos con su información básica
+	 * Adiciona entradas al log de la aplicaciï¿½n
+	 * @return Una lista de objetos VOTipoBebida con todos los tipos de bebida que conoce la aplicaciï¿½n, llenos con su informaciï¿½n bï¿½sica
 	 */
 	public List<VOOrdenProducto> darVOOrdenes ()
 	{
@@ -317,6 +317,11 @@ public class SuperAndes
 	public List<Promocion> requerimientoConsulta2()
 	{
 		return pp.dar20PromocionesMasPopulares();
+	}
+
+	public long requerimientoFuncional12(long idCliente, long idSucursal){
+		long rta = pp.requerimientoFuncional12(idCliente, idSucursal);
+		return rta;
 	}
 	
 	/**

@@ -14,6 +14,8 @@ import javax.jdo.Transaction;
 
 import org.apache.log4j.Logger;
 
+import javafx.scene.control.TableSelectionModel;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -26,6 +28,7 @@ import uniandes.isis2304.superAndes.negocio.ProductosOrden;
 import uniandes.isis2304.superAndes.negocio.Promocion;
 import uniandes.isis2304.superAndes.negocio.Proveedor;
 import uniandes.isis2304.superAndes.negocio.Proveen;
+import uniandes.isis2304.superAndes.negocio.Carrito;
 
 
 public class PersistenciaSuperandes {
@@ -90,6 +93,8 @@ public class PersistenciaSuperandes {
 	private SQLVentasProducto sqlVentas;
 	
 	private SQLProductosSucursal sqlProductosSucursal;
+	
+	private SQLCarrito sqlCarrito;
   
 	/**
 	 * Arreglo de cadenas con los nombres de las tablas de la base de datos.
@@ -137,6 +142,8 @@ public class PersistenciaSuperandes {
 		tablas.add("VENTAS_PRODUCTO");
 		tablas.add("ESPACIO_ACOMODACION");
 		tablas.add("EXISTENCIAS");	
+		tablas.add("CARRITO_COMPRAS");
+		tablas.add("CONTENIDO_CARRITO");
 	}
 	/**
 	 * Constructor privado, que recibe los nombres de las tablas en un objeto Json - Patrón SINGLETON
@@ -226,6 +233,7 @@ public class PersistenciaSuperandes {
 		sqlPromocion = new SQLPromocion(this);
 		sqlExistencias = new SQLExistencias(this);
 		sqlVentas = new SQLVentasProducto(this);
+		sqlCarrito = new SQLCarrito(this);
 	}
 
 	/**
@@ -373,6 +381,19 @@ public class PersistenciaSuperandes {
 	}
 
 	/**
+	 * @return La cadena de caracteres con el nombre de la tabla de Carrito_Compras de parranderos
+	 */
+	public String darTablaCarrito()
+	{
+		return tablas.get(18);
+	}
+	/**
+	 * @return La cadena de caracteres con el nombre de la tabla de Contenido_Carrito de parranderos
+	 */
+	public String darTablaContenidoCarrito(){
+		return tablas.get(19);
+	}
+	/**
 	 * Transacción para el generador de secuencia de Parranderos
 	 * Adiciona entradas al log de la aplicación
 	 * @return El siguiente número del secuenciador de Parranderos
@@ -439,6 +460,37 @@ public class PersistenciaSuperandes {
 			pm.close();
 		}
 
+	}
+	/* ****************************************************************
+	 * 			Métodos para manejar los CarritosCompras
+	 *****************************************************************/
+	public List<Carrito> darCarritosAbandonados(){
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx = pm.currentTransaction();
+		try
+		{
+			System.out.println("Iniciando transaccion");
+			tx.begin();
+			
+		}
+
+		//Deja registro de los posibles errores que se presenten.
+		catch(Exception e) {
+			e.printStackTrace();
+			log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
+			return null;
+		}
+
+		//Hace Rollback de la transaccion y cierra la peticion.
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+
+			pm.close();
+		}       
 	}
 
 	/* ****************************************************************
@@ -992,5 +1044,43 @@ public class PersistenciaSuperandes {
 	{
 		return sqlPromocion.dar20PromocionesMasPopulares(pmf.getPersistenceManager());
 	}
+
+	public long requerimientoFuncional12 (long idCliente, long idSucursal) {
+
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx=pm.currentTransaction();
+		
+		try
+		{
+			tx.begin();
+			//Buscar carrito disponible en la sucursal.
+			Carrito c = sqlCarrito.darCarritoDisponible(pm, idSucursal);
+
+			
+
+			//asignar cliente al carrito
+			long idCarro = c.getIdCarrito();		
+			long asignar = sqlCarrito.asignarACliente(pm, idCliente, idCarro);
+			
+			
+			tx.commit();
+			return asignar;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}		
+	}	 
 	
 }
