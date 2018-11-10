@@ -101,7 +101,7 @@ public class ReqFuncional_9
 			int precioUnitario = 1700;
 			int cantidad = 20;
 			
-			long[] resultados = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
+			long[] resultados = Superandes.RF9pedirProductoAProvPaSuc(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
 			assertTrue("No se esperaba una excepcion ! resultados[0] " + resultados[0] + " resultados[1]" + resultados[1], resultados[0] > 0 && resultados[1] > 0 && resultados[1] > 0);
 			
 			List<VOOrdenProducto> ordenes = Superandes.darVOOrdenes();			
@@ -110,7 +110,7 @@ public class ReqFuncional_9
 			System.out.println(ordenes.get(0).toString());
 			
 			//Tupla repetida	
-			long[] resultados2 = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
+			long[] resultados2 = Superandes.RF9pedirProductoAProvPaSuc(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
 			//Deberia generar excepcion !
 			
 			//ATENCION: Este orden IMPORTA, si se hace en inverso como los productos de la orden
@@ -176,14 +176,14 @@ public class ReqFuncional_9
 			int precioUnitario = 1700;
 			int cantidad = 27;
 			
-			long[] resultados = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
+			long[] resultados = Superandes.RF9pedirProductoAProvPaSuc(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
 			assertTrue("No se esperaba una excepcion ! resultados[0] " + resultados[0] + " resultados[1]" + resultados[1], resultados[0] > 0 && resultados[1] > 0 && resultados[1] > 0);			
 			
 			List<VOOrdenProducto> ordenes = Superandes.darVOOrdenes();			
 			assertEquals ("EN_ESPERA", "EN_ESPERA", ordenes.get(0).getEstado());
 			
 			//Tupla repetida	
-			long[] resultados2 = Superandes.requerimientoFuncional9(9025, 564, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
+			long[] resultados2 = Superandes.RF9pedirProductoAProvPaSuc(9025, 564, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
 			//Deberia generar excepcion !			
 			
 			//ATENCION: Este orden IMPORTA, si se hace en inverso como los productos de la orden
@@ -249,14 +249,14 @@ public class ReqFuncional_9
 			int precioUnitario = 1700;
 			int cantidad = 27;
 			
-			long[] resultados = Superandes.requerimientoFuncional9(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
+			long[] resultados = Superandes.RF9pedirProductoAProvPaSuc(idPedido, idSucursal, nit, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);
 			assertTrue("No se esperaba una excepcion ! resultados[0] " + resultados[0] + " resultados[1]" + resultados[1], resultados[0] > 0 && resultados[1] > 0 && resultados[1] > 0);
 			
 			List<VOOrdenProducto> ordenes = Superandes.darVOOrdenes();			
 			assertEquals ("EN_ESPERA", "EN_ESPERA", ordenes.get(0).getEstado());			
 			
 			//Tupla repetida	
-			long[] resultados2 = Superandes.requerimientoFuncional9(3235, idSucursal, nit, fechaEsperada, fechaEntrega, 15, codProducto, precioUnitario, cantidad);
+			long[] resultados2 = Superandes.RF9pedirProductoAProvPaSuc(3235, idSucursal, nit, fechaEsperada, fechaEntrega, 15, codProducto, precioUnitario, cantidad);
 			
 			//Deberia generar excepcion !			
 			

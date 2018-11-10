@@ -91,12 +91,12 @@ public class ProveedoresTest
 			int nit = 1;
 			String nombre = "Geovanny";
 			int calificacion = 6;					
-			VOProveedor nuevoProveedor = superAndes.adicionarProveedor(nit, nombre, calificacion);
+			VOProveedor nuevoProveedor = superAndes.RF1adicionarProveedor(nit, nombre, calificacion);
 			lista = superAndes.darVOProveedores();
 			assertNotNull("El proveedor se debio crear y no debe ser nulo", nuevoProveedor);
 			assertEquals ("Debe haber un proveedor !!", 1, lista.size ());			
 
-			VOProveedor otroProveedor = superAndes.adicionarProveedor(1, "Fernando", 4);
+			VOProveedor otroProveedor = superAndes.RF1adicionarProveedor(1, "Fernando", 4);
 			assertNull ("No puede adicionar dos proveedores con el mismo nit !!", otroProveedor);
 		}
 		

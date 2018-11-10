@@ -61,10 +61,10 @@ class SQLCarrito {
 	 * @return El n�mero de tuplas insertadas
 	 */
 	
-	public long agregarCarrito(PersistenceManager pm, int total, long id, long idSucursal, long idCliente) {
+	public long agregarCarrito(PersistenceManager pm, long id, long idSucursal) {
 		System.out.println("Crear Query de insercion");	
-		Query qCarrito = pm.newQuery(SQL, "INSERT INTO " + pp.darTablaCarrito() + "(id, fecha, total, id_cliente, id_sucursal) values (?,?,?,?)");
-		qCarrito.setParameters(id, total, idCliente, idSucursal);
+		Query qCarrito = pm.newQuery(SQL, "INSERT INTO " + pp.darTablaCarrito() + "(id, total, id_sucursal) values (?,?,?)");
+		qCarrito.setParameters(id, 0, idSucursal);
 		System.out.println("Inicio de ejecucion de Query" + "Consulta: " + "INSERT INTO " + pp.darTablaCarrito() + "(id, total, id_cliente, id_sucursal) values (?,?,?,?)");
 		long tuplas = (long) qCarrito.executeUnique();
 		System.out.println("[SQLCarrito] Tuplas modificadas: " + tuplas);
@@ -115,7 +115,7 @@ class SQLCarrito {
 	 * @return Una lista de objetos Carrito
 	 */
 	
-	public List<Carrito> darCarrito (PersistenceManager pm)
+	public List<Carrito> darCarritos (PersistenceManager pm)
 	{
 		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaCarrito ());
 		q.setResultClass(Carrito.class);
@@ -125,7 +125,7 @@ class SQLCarrito {
 	
 
     public Carrito darCarritoDisponible( PersistenceManager pm, long idSuc){
-		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaCarrito() + " WHERE ID_SUCURSAL = ? AND ID_CLIENTE IS NULL AND ROWNUM = 1");
+		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaCarrito() + " WHERE ID_SUCURSAL = ? AND ID_CLIENTE IS NULL AND TOTAL = 0 AND ROWNUM = 1");
         q.setParameters(idSuc);
 
         Object result = q.executeUnique();        

@@ -74,10 +74,10 @@ public class SuperAndes
 	 * @return El objeto PROVEEDOR adicionado. null si ocurre alguna Excepcion
 	 */
 	
-	public Proveedor adicionarProveedor (int nit, String nombre, int calificacion)
+	public Proveedor RF1adicionarProveedor (int nit, String nombre, int calificacion)
 	{
         log.info ("Adicionando proveedor con NIT: " + nit);
-        Proveedor proveedor = pp.agregarProveedor(nit, nombre, calificacion);
+        Proveedor proveedor = pp.RF1agregarProveedor(nit, nombre, calificacion);
         log.info ("Adicionando proveedor" + proveedor);
         return proveedor;
 	}	
@@ -291,26 +291,26 @@ public class SuperAndes
 	 * 			Métodos para administración
 	 *****************************************************************/
 
-	public long [] requerimientoFuncional9 (long rPedido, long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
+	public long [] RF9pedirProductoAProvPaSuc (long rPedido, long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
 			String codProducto, int precioUnitario, int cantidad)
 	{
 		log.info ("Agregando una nueva orden de pedido del producto: " + codProducto + " para la sucursal :" + idSucursal + " entregada por el proveedor :" + nitProveedor);
-        long [] resp = pp.requerimientoFuncional9(rPedido, idSucursal, nitProveedor, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);        		
+        long [] resp = pp.RF9pedirProductoAProvPaSuc(rPedido, idSucursal, nitProveedor, fechaEsperada, fechaEntrega, calificacion, codProducto, precioUnitario, cantidad);        		
         log.info ("Pedido agregado: " + resp [0] + " Productos encargados " + resp [1]);
         return resp;
 	}
 	
-	public long [] requerimientoFuncional10 (long idPedido, long idSucursal, Timestamp fechaEntrega, int calificacion)
+	public long [] RF10registrarLlegadaPedido (long idPedido, long idSucursal, Timestamp fechaEntrega, int calificacion)
 	{
 		log.info ("Cumpliendo pedido del producto: " + idPedido + " para la sucursal :" + idSucursal);
-        long [] resp = pp.requerimientoFuncional10(idPedido, idSucursal, fechaEntrega, calificacion);        		
+        long [] resp = pp.RF10registrarLlegadaPedido(idPedido, idSucursal, fechaEntrega, calificacion);        		
         log.info ("Actualizacion pedido: " + resp [0] + " Actualizacion existencias" + resp [2]);
         return resp;
 	}
 	
-	public long[] requerimientoFuncional11(long idFactura, long idCliente, long idSucursal, String codProducto, int cantidad, Timestamp fecha)
+	public long[] RF11RegistrarVentaProducto(long idFactura, long idCliente, long idSucursal, String codProducto, int cantidad, Timestamp fecha)
 	{
-		long[] resp = pp.requerimientoFuncional11(idFactura, idCliente, idSucursal, codProducto, cantidad, fecha);
+		long[] resp = pp.RF11RegistrarVentaProducto(idFactura, idCliente, idSucursal, codProducto, cantidad, fecha);
 		return resp;
 	}
 	

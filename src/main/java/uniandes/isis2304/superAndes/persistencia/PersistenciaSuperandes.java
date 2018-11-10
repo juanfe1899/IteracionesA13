@@ -72,30 +72,32 @@ public class PersistenciaSuperandes {
 
 	private PersistenceManagerFactory pmf;
 
-	/** Clase con las consultas para las operaciones generales en la base de datos. */
+	private SQLCarrito sqlCarrito;
+	
+	private SQLContenidoCarrito sqlContenidoCarrito;
 
-	private SQLUtil sqlUtil;
+	private SQLExistencias sqlExistencias;
 
-	/** Clase con las consultas para las operaciones de la clase Proveedores. */
+	private SQLFacturas sqlFacturas;
 
-	private SQLProveedores sqlProveedores;
+	private SQLOrdenProductos sqlOrdenProductos;
 
 	private SQLProductosOrden sqlProductosOrden;
 
-	private SQLOrdenProductos sqlOrdenProductos;	
-
-	private SQLFacturas sqlFacturas;
-	
-	private SQLPromocion sqlPromocion;	
-
-	private SQLExistencias sqlExistencias;
-	
-	private SQLVentasProducto sqlVentas;
-	
 	private SQLProductosSucursal sqlProductosSucursal;
+
+	private SQLPromocion sqlPromocion;
+
+	private SQLProveedores sqlProveedores;
 	
-	private SQLCarrito sqlCarrito;
-  
+	private SQLSucursales sqlSucursales;
+
+	/** Clase con las consultas para las operaciones generales en la base de datos. */
+	
+	private SQLUtil sqlUtil;
+
+	private SQLVentasProducto sqlVentas;
+
 	/**
 	 * Arreglo de cadenas con los nombres de las tablas de la base de datos.
 	 * Comienza con el Sequence seguido de: Categorias, Producto, Proveedores, Proveen,
@@ -461,37 +463,7 @@ public class PersistenciaSuperandes {
 		}
 
 	}
-	/* ****************************************************************
-	 * 			Métodos para manejar los CarritosCompras
-	 *****************************************************************/
-	public List<Carrito> darCarritosAbandonados(){
-		PersistenceManager pm = pmf.getPersistenceManager();
-		Transaction tx = pm.currentTransaction();
-		try
-		{
-			System.out.println("Iniciando transaccion");
-			tx.begin();
-			
-		}
-
-		//Deja registro de los posibles errores que se presenten.
-		catch(Exception e) {
-			e.printStackTrace();
-			log.error("Exception :" + e.getMessage() + "\n" + darDetalleException(e));
-			return null;
-		}
-
-		//Hace Rollback de la transaccion y cierra la peticion.
-		finally
-		{
-			if (tx.isActive())
-			{
-				tx.rollback();
-			}
-
-			pm.close();
-		}       
-	}
+	
 
 	/* ****************************************************************
 	 * 			Métodos para manejar los PROVEEDORES
@@ -505,7 +477,7 @@ public class PersistenciaSuperandes {
 	 * @return El nuevo proveedor agregado a la base de datos.
 	 */
 
-	public Proveedor agregarProveedor(int nit, String nombre, int calificacion) {
+	public Proveedor RF1agregarProveedor(int nit, String nombre, int calificacion) {
 
 		//Inicio de la transaccion.
 		PersistenceManager pm = pmf.getPersistenceManager();
@@ -845,7 +817,7 @@ public class PersistenciaSuperandes {
 	 * Permite añadir una nueva orden de pedido de un producto a un proveedor
 	 */	
 
-	public long [] requerimientoFuncional9 (long rPedido, long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
+	public long [] RF9pedirProductoAProvPaSuc (long rPedido, long idSucursal, int nitProveedor, Timestamp fechaEsperada, Timestamp fechaEntrega, int calificacion,
 			String codProducto, int precioUnitario, int cantidad) {
 
 		PersistenceManager pm = pmf.getPersistenceManager();
@@ -876,7 +848,7 @@ public class PersistenciaSuperandes {
 		}		
 	} 
 
-	public long [] requerimientoFuncional10 (long idPedido, long idSucursal, Timestamp fechaEntrega, int calificacion) {
+	public long [] RF10registrarLlegadaPedido (long idPedido, long idSucursal, Timestamp fechaEntrega, int calificacion) {
 
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction tx=pm.currentTransaction();
@@ -907,32 +879,8 @@ public class PersistenciaSuperandes {
 		}		
 	}	 
 
-	private long[] consultaReq10(PersistenceManager pm, long idPedido, long idSucursal)
-	{
-		String consulta = "SELECT a.id_producto_suc, a.id_espacio_acomo, c.cantidad ";
-		consulta += "FROM " + darTablaExistencias() + " a, " + darTablaEspacioAcomodacion() + " b, " + darTablaOrdenProductos() +  " c, " + darTablaProductosSucursal() + " d";
-		consulta += " WHERE c.id_pedido = ? AND b.id_sucursal = ? AND a.id_espacio_acomo = b.id AND c.id_producto = d.id_producto AND a.id_producto_suc = d.id"; 
-		Query q = pm.newQuery(SQL, consulta);
-		q.setParameters(idPedido, idSucursal);
-
-		Object result = q.executeUnique();        
-		Object[] resultados = (Object[]) result;
-
-		//Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.
-		long idProductoSuc =  ((BigDecimal) resultados [0]).longValue ();
-		long idEspacio =  ((BigDecimal) resultados [1]).longValue ();		
-		long cantidad = ((BigDecimal) resultados[2]).longValue();		      
-
-		return new long[] {idProductoSuc, idEspacio, cantidad};
-	}
+	public long [] RF11RegistrarVentaProducto (long idFactura, long idCliente, long idSucursal, String codProducto, int cantidad, Timestamp fecha) {
 	
-	public List<Existencias> darExistencias()
-	{
-		return sqlExistencias.darExistencias(pmf.getPersistenceManager());
-	}
-	
-	public long [] requerimientoFuncional11 (long idFactura, long idCliente, long idSucursal, String codProducto, int cantidad, Timestamp fecha) {
-
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction tx=pm.currentTransaction();
 		
@@ -962,7 +910,7 @@ public class PersistenciaSuperandes {
 			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
 			return new long[] {-1, -1, -1};
 		}
-
+	
 		finally
 		{
 			if (tx.isActive())
@@ -971,8 +919,26 @@ public class PersistenciaSuperandes {
 			}
 			pm.close();
 		}		
-	}	 
+	}
+	private long[] consultaReq10(PersistenceManager pm, long idPedido, long idSucursal)
+	{
+		String consulta = "SELECT a.id_producto_suc, a.id_espacio_acomo, c.cantidad ";
+		consulta += "FROM " + darTablaExistencias() + " a, " + darTablaEspacioAcomodacion() + " b, " + darTablaOrdenProductos() +  " c, " + darTablaProductosSucursal() + " d";
+		consulta += " WHERE c.id_pedido = ? AND b.id_sucursal = ? AND a.id_espacio_acomo = b.id AND c.id_producto = d.id_producto AND a.id_producto_suc = d.id"; 
+		Query q = pm.newQuery(SQL, consulta);
+		q.setParameters(idPedido, idSucursal);
 
+		Object result = q.executeUnique();        
+		Object[] resultados = (Object[]) result;
+
+		//Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.
+		long idProductoSuc =  ((BigDecimal) resultados [0]).longValue ();
+		long idEspacio =  ((BigDecimal) resultados [1]).longValue ();		
+		long cantidad = ((BigDecimal) resultados[2]).longValue();		      
+
+		return new long[] {idProductoSuc, idEspacio, cantidad};
+	}
+	
 	private Object[] consultaReq11Promocion(PersistenceManager pm, long idProductoSuc, int cantidad)
 	{
 		String consulta = "select b.id ,b.tipo ";
@@ -980,7 +946,7 @@ public class PersistenciaSuperandes {
 		consulta += " WHERE a.ID_PRODUCTO_SUC = ? AND a.id_promocion = b.id AND b.unidades_disponibles > 0 AND b.fecha_inicio > b.fecha_final"; 
 		Query q = pm.newQuery(SQL, consulta);
 		q.setParameters(idProductoSuc);
-
+	
 		Object result = q.executeUnique();        
 		Object[] resultados = (Object[]) result;
 		
@@ -989,7 +955,7 @@ public class PersistenciaSuperandes {
 		String tipoPromo = "-";
 		
 		if (resultados != null && resultados.length > 0) {
-  		 //Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.			
+		 //Casteo - ruego a Dios Padre que sirva, ya estoy que no puedo del cansancio, llevo 6 horas con eso.			
 		 idPromocion =  ((BigDecimal) resultados [0]).longValue ();
 		 tipoPromo =  (String) resultados [1];
 		 
@@ -1004,8 +970,10 @@ public class PersistenciaSuperandes {
 		
 		return new Object[] {update, tipoPromo};
 	}
-
-	
+	public List<Existencias> darExistencias()
+	{
+		return sqlExistencias.darExistencias(pmf.getPersistenceManager());
+	}
 	
 	/** RFC1
 	 * Método que consulta el dinero recolectado por cada sucursal
@@ -1081,6 +1049,7 @@ public class PersistenciaSuperandes {
 			}
 			pm.close();
 		}		
-	}	 
+	}
+
 	
 }

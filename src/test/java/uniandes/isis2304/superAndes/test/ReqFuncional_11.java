@@ -100,7 +100,7 @@ public class ReqFuncional_11
 			//Obtener las existencias anteriores
 			Existencias ePre = Superandes.darExistencias().get(0);			
 			
-			long [] resultados = Superandes.requerimientoFuncional11(1, idCliente, idSucursal, codProducto, cantidad, fechaEntrega);
+			long [] resultados = Superandes.RF11RegistrarVentaProducto(1, idCliente, idSucursal, codProducto, cantidad, fechaEntrega);
 			assertTrue("No se esperaba una excepcion ! resultados[0] " + resultados[0] + " resultados[1]" + resultados[1], resultados[0] > 0 && resultados[1] > 0 && resultados[1] > 0);						
 		}
 		
