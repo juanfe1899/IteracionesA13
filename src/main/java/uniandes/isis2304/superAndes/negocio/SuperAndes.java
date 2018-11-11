@@ -314,16 +314,16 @@ public class SuperAndes
 		return resp;
 	}
 	
+	public long RF12AsignarCarritoACliente(long idCliente, long idSucursal){
+		long rta = pp.RF12AsignarCarritoDeSucACliente(idCliente, idSucursal);
+		return rta;
+	}
+
 	public List<Promocion> requerimientoConsulta2()
 	{
 		return pp.dar20PromocionesMasPopulares();
 	}
 
-	public long requerimientoFuncional12(long idCliente, long idSucursal){
-		long rta = pp.requerimientoFuncional12(idCliente, idSucursal);
-		return rta;
-	}
-	
 	/**
 	 * Elimina todas las tuplas de todas las tablas de la base de datos de SuperAndes
 	 * @return Un arreglo con 17 numeros que indican el numero de tuplas borradas en las tablas:

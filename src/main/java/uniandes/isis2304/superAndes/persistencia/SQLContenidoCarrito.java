@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-
+import com.sun.javafx.geom.AreaOp.CAGOp;
 
 import uniandes.isis2304.superAndes.negocio.Carrito;
 import uniandes.isis2304.superAndes.persistencia.PersistenciaSuperandes;
@@ -65,6 +65,20 @@ class SQLContenidoCarrito {
 		
 
 
+	}
+
+
+	public long agregarProducto(PersistenceManager pm, long idCarrito, long idEspacioAcom, long idProducto, int cantidad) {
+		Query q = pm.newQuery(SQL, "INSERT INTO " + pp.darTablaContenidoCarrito() + "(ID_CARRITO_COMPRAS, ID_PRODUCTO_SUCURSAL, ID_ESTANTE, CANTIDAD) values (?, ?, ?, ?)");
+        q.setParameters(idCarrito, idProducto, idEspacioAcom, cantidad);
+        return (long) q.executeUnique();
+	}
+
+
+	public long modificarCantidad(PersistenceManager pm, long idCarrito, long idEspacioAcom, long idProducto, int cantidad) {
+		Query q = pm.newQuery(SQL, "UPDATE " + pp.darTablaContenidoCarrito() + " SET cantidad = cantidad + ? WHERE ID_CARRITO_COMPRAS = ? AND ID_PRODUCTO_SUCURSAL = ? AND ID_ESTANTE = ?");
+	     q.setParameters(cantidad, idCarrito, idProducto, idEspacioAcom);
+	     return (long) q.executeUnique();
 	}
 	
 	

@@ -920,6 +920,130 @@ public class PersistenciaSuperandes {
 			pm.close();
 		}		
 	}
+	public long RF12AsignarCarritoDeSucACliente (long idCliente, long idSucursal) {
+	
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx=pm.currentTransaction();
+		
+		try
+		{
+			tx.begin();
+			// Cliente ya tiene carrito
+			List<Carrito> carros = sqlCarrito.darCarritoSucursal(pm, idSucursal);
+			for (Carrito carritoAct : carros) 
+				if (carritoAct.getCliente()==idCliente)
+					return 0;
+			
+			//Buscar carrito disponible en la sucursal.
+			Carrito carritoDisponible = sqlCarrito.darCarritoDisponible(pm, idSucursal);
+	
+			//asignar cliente al carrito
+			long idCarro = carritoDisponible.getIdCarrito();		
+			long asignar = sqlCarrito.asignarACliente(pm, idCliente, idCarro);
+			
+			
+			tx.commit();
+			return asignar;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+	
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}		
+	}
+	
+	public long RF13AddProductoACarrito (long idCarrito, long idEspacioAcom, long idProducto, int cantidad) {
+
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx=pm.currentTransaction();
+		
+		try
+		{
+			tx.begin();
+			
+			// Hay sufisiente producto en el estante?
+			boolean haySuficiente = false;
+			List<Existencias> inventario = sqlExistencias.darExistenciasPorEspacioAcom(pm, idEspacioAcom);
+			for (Existencias exi : inventario) 
+				if(exi.getIdProductoSucursal()==idProducto)
+					if(exi.getCantidadProducto() >= cantidad)
+						haySuficiente = true;
+			
+			long rta = 0;
+			
+			if(haySuficiente){
+				rta = sqlExistencias.moverExistenciasACarrito(pm, idEspacioAcom, idProducto, cantidad);					//Actualizo Estante
+				long rta2 = sqlContenidoCarrito.modificarCantidad(pm, idCarrito, idEspacioAcom, idProducto, cantidad);	//Actualizo cantidad en Carrito
+				if (rta2 == 0)																							//Si no hay tupla para actualizar
+					rta2 += sqlContenidoCarrito.agregarProducto(pm, idCarrito, idEspacioAcom, idProducto, cantidad);	//Agrego nueva tupla
+				rta+=rta2;
+			}
+			tx.commit();
+			return rta;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}		
+	}
+	
+	public long RF14DevolverProductodeCarrito (long idCarrito, long idProducto, int pCantidad) {
+
+		PersistenceManager pm = pmf.getPersistenceManager();
+		Transaction tx=pm.currentTransaction();
+		
+		try
+		{
+			tx.begin();
+			int cantidadRestante = pCantidad;
+			//Buscar tuplas en CONTENIDO_CARRITO por idProducto ordenadas por cantidad.
+			//Por cada tupla:
+			//	1. restar pCantidad a cantidad en tupla (si pCantidad>cantidad => eliminar tupla).
+			// 	2. actualizar cantidades en estante correspondiente (tabla Existencias).
+			// 	3. cantidadRestante-=cantidad(tupla).
+			//	4. si cantidadRestante>0 volver al paso uno con siguiente tupla.
+			long rta = 0;
+			tx.commit();
+			return rta;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
+			return -1;
+		}
+
+		finally
+		{
+			if (tx.isActive())
+			{
+				tx.rollback();
+			}
+			pm.close();
+		}		
+	}
+	
 	private long[] consultaReq10(PersistenceManager pm, long idPedido, long idSucursal)
 	{
 		String consulta = "SELECT a.id_producto_suc, a.id_espacio_acomo, c.cantidad ";
@@ -1012,44 +1136,7 @@ public class PersistenciaSuperandes {
 	{
 		return sqlPromocion.dar20PromocionesMasPopulares(pmf.getPersistenceManager());
 	}
-
-	public long requerimientoFuncional12 (long idCliente, long idSucursal) {
-
-		PersistenceManager pm = pmf.getPersistenceManager();
-		Transaction tx=pm.currentTransaction();
-		
-		try
-		{
-			tx.begin();
-			//Buscar carrito disponible en la sucursal.
-			Carrito c = sqlCarrito.darCarritoDisponible(pm, idSucursal);
-
-			
-
-			//asignar cliente al carrito
-			long idCarro = c.getIdCarrito();		
-			long asignar = sqlCarrito.asignarACliente(pm, idCliente, idCarro);
-			
-			
-			tx.commit();
-			return asignar;
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			log.error ("Exception : " + e.getMessage() + "\n" + darDetalleException(e));
-			return -1;
-		}
-
-		finally
-		{
-			if (tx.isActive())
-			{
-				tx.rollback();
-			}
-			pm.close();
-		}		
-	}
+	
 
 	
 }

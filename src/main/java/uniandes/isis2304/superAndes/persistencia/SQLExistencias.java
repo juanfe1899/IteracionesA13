@@ -150,5 +150,20 @@ class SQLExistencias {
 		 Query q = pm.newQuery(SQL, "UPDATE " + pp.darTablaExistencias () + " SET CANTIDAD = CANTIDAD + ? WHERE ID_PRODUCTO_SUC = ? AND ID_ESPACIO_ACOMO = ?");
 	     q.setParameters(nuevaCantidad, idProductoSuc, idEspacio);
 	     return (long) q.executeUnique();            
+	}
+
+
+	public List<Existencias> darExistenciasPorEspacioAcom(PersistenceManager pm, long idEspacioAcom) {
+		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaExistencias () + " WHERE ID_ESPACIO_ACOMO = ?");
+		q.setResultClass(Existencias.class);
+		q.setParameters(idEspacioAcom);
+		return (List<Existencias>) q.executeList();
+	}
+
+
+	public long moverExistenciasACarrito(PersistenceManager pm, long idEspacioAcom, long idProducto, int cantidad) {
+		Query q = pm.newQuery(SQL, "UPDATE " + pp.darTablaExistencias() + " SET CANTIDAD = CANTIDAD - ?, CANTIDAD_EN_CARRITOS = CANTIDAD_EN_CARRITOS + ?  WHERE ID_ESPACIO_ACOMO = ? AND ID_PRODUCTO_SUC = ?");
+        q.setParameters(cantidad, cantidad, idEspacioAcom, idProducto);
+        return (long) q.executeUnique();
 	}	
 }

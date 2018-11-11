@@ -92,7 +92,7 @@ class SQLCarrito {
 	 * @return El objeto Carrito que tiene el identificador dado
 	 */
 	
-	public Carrito darCarrito(PersistenceManager pm, int id) {
+	public Carrito darCarrito(PersistenceManager pm, long id) {
 		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaCarrito() + " WHERE id = ?");
         q.setParameters(id);
 
@@ -106,6 +106,15 @@ class SQLCarrito {
 		Carrito rsp = new Carrito( idCarrito, total, idCliente, idSucursal);      
          
         return rsp;
+	}
+	
+	public List<Carrito> darCarritoSucursal(PersistenceManager pm, long idSuc) {
+		Query q = pm.newQuery(SQL, "SELECT * FROM " + pp.darTablaCarrito() + " WHERE ID_SUCURSAL = ?");
+        q.setParameters(idSuc);
+
+        q.setResultClass(Carrito.class);
+		List<Carrito> executeList = (List<Carrito>) q.executeList();		
+		return executeList;
 	}
 	
 	/**
